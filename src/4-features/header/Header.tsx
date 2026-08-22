@@ -39,7 +39,7 @@ export default function Header() {
             </span>
           </a>
 
-          <nav
+          {/* <nav
             aria-label={t("navigationAriaLabel")}
             className="hidden items-center gap-7 lg:flex"
           >
@@ -70,7 +70,7 @@ export default function Header() {
             >
               {t("navigation.faq")}
             </a>
-          </nav>
+          </nav> */}
 
           <a
             href="#srce"
