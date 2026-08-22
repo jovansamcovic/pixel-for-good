@@ -126,6 +126,34 @@ const drawPixelLogo = (
   });
 };
 
+const drawLinkIcon = (
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number,
+) => {
+  const scale = size / 24;
+
+  context.save();
+  context.translate(x, y);
+  context.scale(scale, scale);
+  context.strokeStyle = "#287EB1";
+  context.lineWidth = 2.4;
+  context.lineCap = "round";
+  context.lineJoin = "round";
+  context.stroke(
+    new Path2D(
+      "M10.5 13.5a4 4 0 0 0 5.66.06l2.4-2.4a4 4 0 0 0-5.66-5.66l-1.38 1.38",
+    ),
+  );
+  context.stroke(
+    new Path2D(
+      "M13.5 10.5a4 4 0 0 0-5.66-.06l-2.4 2.4a4 4 0 0 0 5.66 5.66l1.38-1.38",
+    ),
+  );
+  context.restore();
+};
+
 const createInstagramStory = async (
   donation: DonationRecord,
   copy: StoryCopy,
@@ -156,49 +184,48 @@ const createInstagramStory = async (
       }
     }
 
-    drawPixelLogo(context, 72, 64);
-
-    context.textAlign = "left";
-    context.fillStyle = COLORS.navy;
-    context.font = '800 29px "Sora", Arial, sans-serif';
-    context.fillText(copy.brandName, 160, 108);
-
-    context.textAlign = "right";
-    context.fillStyle = COLORS.red;
-    context.font = '800 21px "Sora", Arial, sans-serif';
-    context.fillText(copy.hashtag, 1004, 108);
+    drawPixelLogo(context, 76, 72);
 
     context.textAlign = "center";
     context.fillStyle = COLORS.navy;
-    context.font = '800 88px "Sora", Arial, sans-serif';
-    context.fillText(copy.titleFirst, 540, 240);
+    context.font = '700 88px "Cormorant Garamond", Georgia, serif';
+    context.fillText(copy.titleFirst, 540, 260);
 
     context.fillStyle = COLORS.red;
-    context.font = '700 88px "Fraunces", Georgia, serif';
-    context.fillText(copy.titleHighlighted, 540, 330);
+    context.fillText(copy.titleHighlighted, 540, 348);
 
     context.fillStyle = COLORS.navy;
-    context.font = '800 88px "Sora", Arial, sans-serif';
-    context.fillText(copy.titleLast, 540, 420);
+    context.fillText(copy.titleLast, 540, 436);
 
     context.fillStyle = COLORS.muted;
-    context.font = '400 28px "Sora", Arial, sans-serif';
-    context.fillText(copy.tagline, 540, 474);
+    context.font = '400 28px "Geist", Arial, sans-serif';
+    context.fillText(copy.tagline, 540, 492);
 
-    const cell = 15;
-    const gap = 3;
+    context.shadowColor = "rgba(13, 39, 52, 0.14)";
+    context.shadowBlur = 24;
+    context.shadowOffsetY = 12;
+    context.fillStyle = COLORS.white;
+    roundedRect(context, 390, 560, 300, 72, 22);
+
+    context.shadowColor = "transparent";
+    context.shadowBlur = 0;
+    context.shadowOffsetY = 0;
+    context.fillStyle = "#287EB1";
+    context.font = '700 25px "Geist", Arial, sans-serif';
+    drawLinkIcon(context, 430, 579, 34);
+    context.fillText(copy.linkStickerLabel, 558, 606);
+
+    const cell = 16;
+    const gap = 4;
     const heartWidth = HEART_COLUMNS * cell + (HEART_COLUMNS - 1) * gap;
     const heartX = (canvas.width - heartWidth) / 2;
-    const heartY = 540;
+    const heartY = 700;
     const selectedHeartPixel = HEART_PIXELS.find(
       (pixel) => pixel.id + 1 === donation.id,
     );
-    const selectedPixelX = selectedHeartPixel
-      ? heartX + selectedHeartPixel.col * (cell + gap) + cell / 2
-      : canvas.width / 2;
     const selectedPixelY = selectedHeartPixel
       ? heartY + selectedHeartPixel.row * (cell + gap) + cell
-      : 1180;
+      : heartY + heartWidth;
 
     HEART_PIXELS.forEach((pixel) => {
       const x = heartX + pixel.col * (cell + gap);
@@ -224,13 +251,22 @@ const createInstagramStory = async (
       }
     });
 
-    const donorCardWidth = 700;
-    const donorCardHeight = 220;
-    const donorCardX = Math.min(
-      Math.max(selectedPixelX - donorCardWidth / 2, 70),
-      canvas.width - donorCardWidth - 70,
-    );
-    const donorCardY = Math.min(Math.max(selectedPixelY + 42, 900), 1340);
+    const donorCardWidth = 650;
+    const donorCardHeight = 205;
+    const donorCardLeftPercent = selectedHeartPixel
+      ? Math.min(
+          Math.max(
+            ((selectedHeartPixel.col + 0.5) / HEART_COLUMNS) * 100,
+            28,
+          ),
+          72,
+        )
+      : 50;
+    const donorCardX =
+      heartX +
+      (donorCardLeftPercent / 100) * heartWidth -
+      donorCardWidth / 2;
+    const donorCardY = selectedPixelY + 25;
 
     context.fillStyle = COLORS.white;
     context.shadowColor = "rgba(13, 39, 52, 0.13)";
@@ -251,60 +287,41 @@ const createInstagramStory = async (
     context.shadowOffsetY = 0;
 
     context.fillStyle = donation.color;
-    roundedRect(context, donorCardX + 28, donorCardY + 30, 150, 160, 18);
+    roundedRect(context, donorCardX + 28, donorCardY + 28, 140, 149, 18);
 
     context.strokeStyle = COLORS.navy;
     context.lineWidth = 7;
-    context.strokeRect(donorCardX + 39, donorCardY + 41, 128, 138);
+    context.strokeRect(donorCardX + 38, donorCardY + 38, 120, 129);
 
     context.fillStyle = COLORS.white;
     context.textAlign = "center";
-    context.font = '800 34px "Sora", Arial, sans-serif';
-    context.fillText(`#${donation.id}`, donorCardX + 103, donorCardY + 123);
+    context.font = '800 34px "Geist", Arial, sans-serif';
+    context.fillText(`#${donation.id}`, donorCardX + 98, donorCardY + 116);
 
     context.textAlign = "left";
-    context.fillStyle = COLORS.red;
-    context.font = '800 21px "Sora", Arial, sans-serif';
-    context.fillText(copy.pixelLabel, donorCardX + 210, donorCardY + 55);
-
     context.fillStyle = COLORS.navy;
-    context.font = '700 48px "Fraunces", Georgia, serif';
+    context.font = '700 48px "Cormorant Garamond", Georgia, serif';
 
     drawWrappedText(
       context,
       donation.name || copy.anonymousDonor,
-      donorCardX + 210,
-      donorCardY + 112,
-      450,
+      donorCardX + 195,
+      donorCardY + 88,
+      415,
       48,
     );
 
     context.fillStyle = COLORS.muted;
-    context.font = '400 27px "Sora", Arial, sans-serif';
+    context.font = '400 24px "Geist", Arial, sans-serif';
 
     drawWrappedText(
       context,
       donation.message ? `„${donation.message}”` : copy.defaultMessage,
-      donorCardX + 210,
-      donorCardY + 166,
-      450,
-      34,
+      donorCardX + 195,
+      donorCardY + 142,
+      415,
+      31,
     );
-
-    context.shadowColor = "rgba(13, 39, 52, 0.12)";
-    context.shadowBlur = 18;
-    context.shadowOffsetY = 8;
-    context.fillStyle = COLORS.white;
-    roundedRect(context, 260, 1580, 560, 88, 22);
-
-    context.shadowColor = "transparent";
-    context.shadowBlur = 0;
-    context.shadowOffsetY = 0;
-
-    context.textAlign = "center";
-    context.fillStyle = COLORS.navy;
-    context.font = '800 25px "Sora", Arial, sans-serif';
-    context.fillText(`↗  ${copy.linkStickerLabel}`, 540, 1635);
 
     canvas.toBlob(
       (blob) => {
