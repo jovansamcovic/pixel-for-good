@@ -1,25 +1,29 @@
-const steps = [
-  {
-    number: "01",
-    title: "Izaberi piksel",
-    description: "Pronađi slobodno mesto na slici.",
-    badgeClassName: "bg-[#FCE4E1] text-[#D6384B]",
-  },
-  {
-    number: "02",
-    title: "Dodaj svoju poruku",
-    description: "Upiši ime, inicijale ili kratku poruku koja ostaje uz tvoj piksel.",
-    badgeClassName: "bg-[#FDEBCB] text-[#F5A33B]",
-  },
-  {
-    number: "03",
-    title: "Potvrdi donaciju",
-    description: "Nakon uplate, piksel postaje deo zajedničke slike dobrote.",
-    badgeClassName: "bg-[#DDE8E1] text-[#27533D]",
-  },
-];
+import { useTranslations } from "next-intl";
 
 export function HowItWorksSection() {
+  const t = useTranslations("HowItWorks");
+
+  const steps = [
+    {
+      number: "01",
+      title: t("steps.choosePixel.title"),
+      description: t("steps.choosePixel.description"),
+      badgeClassName: "bg-[#FCE4E1] text-[#D6384B]",
+    },
+    {
+      number: "02",
+      title: t("steps.addMessage.title"),
+      description: t("steps.addMessage.description"),
+      badgeClassName: "bg-[#FDEBCB] text-[#F5A33B]",
+    },
+    {
+      number: "03",
+      title: t("steps.confirmDonation.title"),
+      description: t("steps.confirmDonation.description"),
+      badgeClassName: "bg-[#DDE8E1] text-[#27533D]",
+    },
+  ];
+
   return (
     <section
       id="kako-radi"
@@ -28,11 +32,11 @@ export function HowItWorksSection() {
       <div className="mx-auto max-w-7xl">
         <header className="text-center">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#D6384B]">
-            Kako funkcioniše
+            {t("eyebrow")}
           </p>
 
           <h2 className="mx-auto mt-4 max-w-4xl text-3xl font-extrabold leading-tight tracking-[-0.04em] text-[#0D2734] sm:text-4xl lg:text-5xl">
-            Tri mala koraka do velike promene
+            {t("title")}
           </h2>
         </header>
 
@@ -43,12 +47,12 @@ export function HowItWorksSection() {
               className="min-h-[220px] rounded-[26px] bg-white p-7 shadow-[0_14px_35px_rgba(13,39,52,0.07)] sm:p-8"
             >
               <span
+                aria-hidden="true"
                 className={[
-                  "inline-flex h-12 min-w-12 items-center justify-center rounded-2xl px-3",
-                  "text-lg font-extrabold",
+                  "inline-flex h-12 min-w-12 items-center justify-center",
+                  "rounded-2xl px-3 text-lg font-extrabold",
                   step.badgeClassName,
                 ].join(" ")}
-                aria-hidden="true"
               >
                 {step.number}
               </span>

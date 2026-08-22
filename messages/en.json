@@ -1,5 +1,257 @@
 {
-  "Common": {
-    "contactCta": "Reach out"
+  "Header": {
+    "brandName": "choose a pixel",
+    "demoConcept": "Interactive demo concept",
+    "paymentsDisabled": "Payments are not active",
+    "homeAriaLabel": "Choose a pixel — home",
+    "navigationAriaLabel": "Main navigation",
+    "navigation": {
+      "howItWorks": "How it works",
+      "about": "About the campaign",
+      "transparency": "Transparency",
+      "faq": "Frequently asked questions"
+    },
+    "cta": "Choose a pixel"
+  },
+  "Hero": {
+    "eyebrow": "Charity campaign · Kragujevac",
+    "title": {
+      "first": "One pixel.",
+      "highlighted": "One step",
+      "last": "closer to the goal."
+    },
+    "description": "Choose a place in the shared image and turn it into tangible support. Every pixel leaves a lasting mark of kindness.",
+    "primaryAction": "Choose your pixel",
+    "secondaryAction": "Learn more",
+    "statistics": {
+      "raisedLabel": "Raised so far",
+      "raisedValue": "1,174,000 RSD",
+      "pixelsLabel": "Selected pixels",
+      "pixelsValue": "2,348"
+    },
+    "heartCard": {
+      "title": "Our shared picture of kindness",
+      "progress": "{progress}% complete",
+      "progressAriaLabel": "Completion of the shared image",
+      "legend": {
+        "occupied": "Occupied",
+        "available": "Available"
+      },
+      "action": "Click an available pixel"
+    }
+  },
+  "CampaignTrustBar": {
+    "ariaLabel": "Campaign reliability and transparency",
+    "introduction": {
+      "title": "Every donation is publicly recorded",
+      "description": "A clear goal, regular reports and direct donations."
+    },
+    "securePayment": {
+      "title": "Secure donation",
+      "description": "No hidden fees"
+    },
+    "publicProgress": {
+      "title": "Public progress",
+      "description": "Updated every day"
+    }
+  },
+  "HowItWorks": {
+    "eyebrow": "How it works",
+    "title": "Three small steps towards a big change",
+    "steps": {
+      "choosePixel": {
+        "title": "Choose a pixel",
+        "description": "Find an available place in the picture."
+      },
+      "addMessage": {
+        "title": "Add your message",
+        "description": "Enter your name, initials or a short message that will remain with your pixel."
+      },
+      "confirmDonation": {
+        "title": "Confirm your donation",
+        "description": "After the donation, your pixel becomes part of our shared picture of kindness."
+      }
+    }
+  },
+  "CampaignWidget": {
+    "eyebrow": "Main step",
+    "title": "Choose a pixel and leave your mark",
+    "description": "Click an available pixel, choose a colour and add a message of support.",
+    "availablePixels": "{count} still available",
+    "legend": {
+      "ariaLabel": "Pixel legend",
+      "donated": "Donated",
+      "available": "AvailableAvailable",
+      "selected": "Your choice"
+    }
+  },
+  "Faq": {
+    "eyebrow": "Frequently asked questions",
+    "title": "Everything you need to know",
+    "questions": {
+      "digitalPixel": {
+        "question": "Am I buying a real digital pixel?",
+        "answer": "Your donation reserves one specific place in the heart. The pixel receives its own colour, number and an optional donor name or message."
+      },
+      "funds": {
+        "question": "How can I track how the funds are used?",
+        "answer": "The public overview displays the amount raised, the budget plan, monthly receipts and the partner organisation's final report."
+      },
+      "anonymous": {
+        "question": "Can I remain anonymous?",
+        "answer": "Yes. Your name and message are optional, while the donation amount is included in the public total without publishing any personal information."
+      }
+    }
+  },
+  "Footer": {
+    "brandName": "choose a pixel",
+    "homeAriaLabel": "Choose a pixel — return to the top",
+    "tagline": "One pixel. One step closer to the goal. Together, we are creating a visible picture of kindness.",
+    "disclaimer": "This is a demo concept for a charity platform. All names, amounts and donors are illustrative. Real payments and personal data storage are not enabled.",
+    "copyright": "© {year} Choose a pixel"
+  },
+  "LoadingScreen": {
+    "ariaLabel": "Loading the website",
+    "eyebrow": "Choose a pixel",
+    "title": {
+      "first": "Let’s colour the heart",
+      "highlighted": "together."
+    },
+    "description": "One pixel. One step closer to the goal. Join our shared picture of kindness.",
+    "language": {
+      "ariaLabel": "Select language"
+    },
+    "countdown": {
+      "ariaLabel": "Countdown to the start of the charity campaign",
+      "title": "Until the campaign begins",
+      "completed": "The campaign has started",
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes",
+      "seconds": "Seconds"
+    },
+    "enterButton": "Enter the website",
+    "screenReaderLoading": "The website is loading…"
+  },
+  "DonationForm": {
+    "defaults": {
+      "anonymousDonor": "Anonymous donor",
+      "donor": "Kindness donor",
+      "message": "One pixel. One good deed."
+    },
+    "success": {
+      "eyebrow": "Thank you!",
+      "title": "Your pixel now beats with all the others.",
+      "description": "Pixel <strong>#{pixel}</strong> has been added to our shared heart. In the real version, a payment confirmation and digital thank-you card would follow.",
+      "shareButton": "Share on Instagram",
+      "resetButton": "Colour another pixel"
+    },
+    "form": {
+      "eyebrow": "Your mark in the heart",
+      "selectedPixel": "Pixel #{pixel}",
+      "noPixelSelected": "Choose a pixel in the heart",
+      "selectedIntroduction": "Great choice. Now add a colour, name and short message.",
+      "emptyIntroduction": "Click an available square in the heart. You can then personalise it.",
+      "color": {
+        "label": "Pixel colour",
+        "selectAriaLabel": "Choose colour {number}",
+        "selectedLabel": "Selected colour"
+      },
+      "name": {
+        "label": "Name on the wall of gratitude",
+        "placeholder": "Your name or initials"
+      },
+      "message": {
+        "label": "Message",
+        "optional": "(optional)",
+        "placeholder": "Write a short message of support…"
+      },
+      "anonymous": "I want my donation to be anonymous",
+      "submitButton": "Confirm demo donation",
+      "demoNotice": "This is a demo — no payment or personal data storage takes place."
+    }
+  },
+  "PixelSelector": {
+    "hint": "Click an available square to select it",
+    "pinchHint": "Spread two fingers over the heart to zoom in",
+    "zoomStatus": "The current zoom level is {percentage} percent.",
+    "controls": {
+      "zoomOut": "Zoom out of the heart",
+      "zoomIn": "Zoom in on the heart",
+      "reset": "Reset to the original size"
+    }
+  },
+  "InstagramStoryDialog": {
+    "modal": {
+      "closeLabel": "Close Instagram Story"
+    },
+    "preview": {
+      "ariaLabel": "Instagram Story preview",
+      "eyebrow": "My mark in the heart"
+    },
+    "story": {
+      "brandName": "choose a pixel",
+      "hashtag": "#PIXELBYPIXEL",
+      "title": {
+        "first": "One pixel.",
+        "highlighted": "One step",
+        "last": "closer to the goal."
+      },
+      "tagline": "Become part of our shared picture of kindness.",
+      "pixelLabel": "MY PIXEL OF KINDNESS",
+      "anonymousDonor": "Anonymous donor",
+      "defaultMessage": "Thank you for helping us create change together.",
+      "footerAction": "Choose your pixel",
+      "footerDomain": "srce-kragujevca.rs",
+      "joinButton": "JOIN US",
+      "fileName": "my-pixel"
+    },
+    "controls": {
+      "eyebrow": "Your personalised Story",
+      "title": "Ready for Instagram.",
+      "description": "Your Story is prepared in 1080 × 1920 px format. It includes your highlighted pixel, name and message of support.",
+      "steps": {
+        "share": "Press the share button.",
+        "instagram": "Choose Instagram on your phone.",
+        "publish": "Select Story and publish it."
+      },
+      "preparing": "Preparing your Story…",
+      "shareButton": "Share on Instagram",
+      "downloadButton": "Download Story as PNG",
+      "helper": "On a computer or unsupported phone, the Story will be downloaded automatically."
+    },
+    "sharing": {
+      "title": "My pixel of kindness",
+      "text": "Become part of our shared heart. #PixelByPixel"
+    },
+    "status": {
+      "preparationFailed": "The Story could not be prepared at this time.",
+      "downloaded": "Your Story has been downloaded. You can now add it to Instagram Story.",
+      "shared": "Your Story has been shared. Choose Instagram Story from the sharing menu.",
+      "cancelled": "Sharing was cancelled."
+    },
+    "errors": {
+      "canvasUnsupported": "Canvas is not supported.",
+      "imageGeneration": "The image could not be generated."
+    }
+  },
+  "DonationBadge": {
+    "label": "My pixel of kindness",
+    "pixelAriaLabel": "Pixel number {pixel}"
+  },
+  "PixelHeart": {
+    "ariaLabel": "Heart made of pixels",
+    "soldAriaLabel": "Pixel {pixel}, donor {donor}",
+    "availableAriaLabel": "Choose available pixel {pixel}",
+    "soldTitle": "{donor} • Thank you!",
+    "availableTitle": "Available pixel #{pixel}",
+    "donors": {
+      "mina": "Mina P.",
+      "vukAndTara": "Vuk and Tara",
+      "ilicFamily": "The Ilić family",
+      "luka": "Luka M.",
+      "anaAndOgnjen": "Ana and Ognjen",
+      "anonymous": "Anonymous"
+    }
   }
 }

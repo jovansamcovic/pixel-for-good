@@ -5,10 +5,12 @@ import { HowItWorksSection } from "@/src/3-widgets/how-it-works/HowItWorksSectio
 import { CampaignTrustBar } from "@/src/4-features/campain-trust-bar/CampainTrustBar";
 import Footer from "@/src/4-features/footer/Footer";
 import Header from "@/src/4-features/header/Header";
+import LoadingScreen from "@/src/4-features/LoadingScreen/LoadingScreen";
 
 export function HomePage() {
   return (
     <main>
+      <LoadingScreen/>
       <Header />
       <HeroSection />
       <CampaignTrustBar/>

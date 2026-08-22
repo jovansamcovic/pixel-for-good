@@ -1,22 +1,26 @@
-const questions = [
-  {
-    question: "Da li kupujem pravi digitalni piksel?",
-    answer:
-      "Donacija rezerviše jedno konkretno mesto u srcu. Piksel dobija svoju boju, broj i opciono ime ili poruku donatora.",
-  },
-  {
-    question: "Kako mogu da pratim utrošak sredstava?",
-    answer:
-      "Javni pregled prikazuje prikupljeni iznos, plan budžeta, mesečne račune i završni izveštaj partnerske organizacije.",
-  },
-  {
-    question: "Mogu li da ostanem anoniman?",
-    answer:
-      "Da. Ime i poruka su opcioni, dok se iznos donacije uračunava u javni zbir bez objavljivanja ličnih podataka.",
-  },
-];
+import { useTranslations } from "next-intl";
 
 export function FaqSection() {
+  const t = useTranslations("Faq");
+
+  const questions = [
+    {
+      id: "digitalPixel",
+      question: t("questions.digitalPixel.question"),
+      answer: t("questions.digitalPixel.answer"),
+    },
+    {
+      id: "funds",
+      question: t("questions.funds.question"),
+      answer: t("questions.funds.answer"),
+    },
+    {
+      id: "anonymous",
+      question: t("questions.anonymous.question"),
+      answer: t("questions.anonymous.answer"),
+    },
+  ];
+
   return (
     <section
       id="faq"
@@ -25,18 +29,18 @@ export function FaqSection() {
       <div className="mx-auto max-w-7xl">
         <header>
           <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#D6384B]">
-            Česta pitanja
+            {t("eyebrow")}
           </p>
 
           <h2 className="mt-4 text-4xl font-extrabold leading-tight tracking-[-0.04em] text-[#0D2734] sm:text-5xl">
-            Sve što treba da znaš
+            {t("title")}
           </h2>
         </header>
 
         <div className="mt-10 space-y-4">
           {questions.map((item, index) => (
             <details
-              key={item.question}
+              key={item.id}
               open={index === 0}
               className="group overflow-hidden rounded-2xl border border-transparent bg-white transition-colors open:border-[#D6384B]/10"
             >
@@ -44,11 +48,13 @@ export function FaqSection() {
                 <span>{item.question}</span>
 
                 <span
-                  className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#FFF6EB] text-xl text-[#0D2734] transition group-open:rotate-180 group-open:bg-[#D6384B] group-open:text-white"
                   aria-hidden="true"
+                  className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#FFF6EB] text-xl text-[#0D2734] transition group-open:rotate-180 group-open:bg-[#D6384B] group-open:text-white"
                 >
                   <span className="group-open:hidden">+</span>
-                  <span className="hidden group-open:inline">−</span>
+                  <span className="hidden group-open:inline">
+                    −
+                  </span>
                 </span>
               </summary>
 

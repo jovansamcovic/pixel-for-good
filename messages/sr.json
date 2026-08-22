@@ -1,5 +1,257 @@
 {
-  "Common": {
-    "contactCta": "Javite se"
+  "Header": {
+    "brandName": "izaberi pixel",
+    "demoConcept": "Interaktivni demo koncept",
+    "paymentsDisabled": "Uplate nisu aktivne",
+    "homeAriaLabel": "Izaberi pixel — početna",
+    "navigationAriaLabel": "Glavna navigacija",
+    "navigation": {
+      "howItWorks": "Kako funkcioniše",
+      "about": "O akciji",
+      "transparency": "Transparentnost",
+      "faq": "Česta pitanja"
+    },
+    "cta": "Izaberi piksel"
+  },
+  "Hero": {
+    "eyebrow": "Humanitarna akcija · Kragujevac",
+    "title": {
+      "first": "Jedan piksel.",
+      "highlighted": "Jedan korak",
+      "last": "bliže cilju."
+    },
+    "description": "Izaberi mesto na zajedničkoj slici i pretvori ga u konkretnu pomoć. Svaki piksel ostavlja trajni trag dobrote.",
+    "primaryAction": "Izaberi svoj piksel",
+    "secondaryAction": "Saznaj više",
+    "statistics": {
+      "raisedLabel": "Prikupljeno do sada",
+      "raisedValue": "1.174.000 RSD",
+      "pixelsLabel": "Izabranih piksela",
+      "pixelsValue": "2.348"
+    },
+    "heartCard": {
+      "title": "Zajednička slika dobrote",
+      "progress": "{progress}% popunjeno",
+      "progressAriaLabel": "Popunjenost zajedničke slike",
+      "legend": {
+        "occupied": "Zauzeto",
+        "available": "Slobodno"
+      },
+      "action": "Klikni na slobodan piksel"
+    }
+  },
+  "CampaignTrustBar": {
+    "ariaLabel": "Pouzdanost i transparentnost kampanje",
+    "introduction": {
+      "title": "Svaka uplata je javno evidentirana",
+      "description": "Jasan cilj, redovni izveštaji i direktna uplata."
+    },
+    "securePayment": {
+      "title": "Sigurna uplata",
+      "description": "Bez skrivenih troškova"
+    },
+    "publicProgress": {
+      "title": "Javan napredak",
+      "description": "Ažurirano svakog dana"
+    }
+  },
+  "HowItWorks": {
+    "eyebrow": "Kako funkcioniše",
+    "title": "Tri mala koraka do velike promene",
+    "steps": {
+      "choosePixel": {
+        "title": "Izaberi piksel",
+        "description": "Pronađi slobodno mesto na slici."
+      },
+      "addMessage": {
+        "title": "Dodaj svoju poruku",
+        "description": "Upiši ime, inicijale ili kratku poruku koja ostaje uz tvoj piksel."
+      },
+      "confirmDonation": {
+        "title": "Potvrdi donaciju",
+        "description": "Nakon uplate, piksel postaje deo zajedničke slike dobrote."
+      }
+    }
+  },
+  "CampaignWidget": {
+    "eyebrow": "Glavni korak",
+    "title": "Izaberi piksel i ostavi svoj trag",
+    "description": "Klikni na slobodan piksel, odaberi boju i dodaj poruku podrške.",
+    "availablePixels": "Još {count} slobodnih",
+    "legend": {
+      "ariaLabel": "Legenda piksela",
+      "donated": "Donirano",
+      "available": "Slobodno",
+      "selected": "Tvoj izbor"
+    }
+  },
+  "Faq": {
+    "eyebrow": "Česta pitanja",
+    "title": "Sve što treba da znaš",
+    "questions": {
+      "digitalPixel": {
+        "question": "Da li kupujem pravi digitalni piksel?",
+        "answer": "Donacija rezerviše jedno konkretno mesto u srcu. Piksel dobija svoju boju, broj i opciono ime ili poruku donatora."
+      },
+      "funds": {
+        "question": "Kako mogu da pratim utrošak sredstava?",
+        "answer": "Javni pregled prikazuje prikupljeni iznos, plan budžeta, mesečne račune i završni izveštaj partnerske organizacije."
+      },
+      "anonymous": {
+        "question": "Mogu li da ostanem anoniman?",
+        "answer": "Da. Ime i poruka su opcioni, dok se iznos donacije uračunava u javni zbir bez objavljivanja ličnih podataka."
+      }
+    }
+  },
+  "Footer": {
+    "brandName": "izaberi pixel",
+    "homeAriaLabel": "Izaberi pixel — povratak na početak",
+    "tagline": "Jedan piksel. Jedan korak bliže cilju. Zajedno stvaramo vidljivu sliku dobrote.",
+    "disclaimer": "Demo koncept humanitarne platforme. Svi nazivi, iznosi i donatori su ilustrativni. Stvarne uplate i čuvanje ličnih podataka nisu omogućeni.",
+    "copyright": "© {year} Izaberi pixel"
+  },
+  "LoadingScreen": {
+    "ariaLabel": "Učitavanje stranice",
+    "eyebrow": "Izaberi pixel",
+    "title": {
+      "first": "Bojimo srce",
+      "highlighted": "zajedno."
+    },
+    "description": "Jedan piksel. Jedan korak bliže cilju. Pridruži se zajedničkoj slici dobrote.",
+    "language": {
+      "ariaLabel": "Izbor jezika"
+    },
+    "countdown": {
+      "ariaLabel": "Odbrojavanje do početka humanitarne akcije",
+      "title": "Do početka akcije",
+      "completed": "Akcija je počela",
+      "days": "Dana",
+      "hours": "Sati",
+      "minutes": "Minuta",
+      "seconds": "Sekundi"
+    },
+    "enterButton": "Uđi na sajt",
+    "screenReaderLoading": "Stranica se učitava…"
+  },
+  "DonationForm": {
+    "defaults": {
+      "anonymousDonor": "Anonimni donator",
+      "donor": "Donator dobrote",
+      "message": "Jedan piksel. Jedno dobro delo."
+    },
+    "success": {
+      "eyebrow": "Hvala!",
+      "title": "Tvoj piksel sada kuca sa svima.",
+      "description": "Piksel <strong>#{pixel}</strong> je dodat zajedničkom srcu. U pravoj verziji ovde bi usledila potvrda uplate i digitalna zahvalnica.",
+      "shareButton": "Podeli na Instagram",
+      "resetButton": "Oboji još jedan piksel"
+    },
+    "form": {
+      "eyebrow": "Tvoj trag u srcu",
+      "selectedPixel": "Piksel #{pixel}",
+      "noPixelSelected": "Izaberi piksel na srcu",
+      "selectedIntroduction": "Sjajan izbor. Sada mu dodaj boju, ime i kratku poruku.",
+      "emptyIntroduction": "Klikni na slobodan kvadratić u srcu. Zatim možeš da ga personalizuješ.",
+      "color": {
+        "label": "Boja piksela",
+        "selectAriaLabel": "Izaberi boju {number}",
+        "selectedLabel": "Izabrana boja"
+      },
+      "name": {
+        "label": "Ime na zidu zahvalnosti",
+        "placeholder": "Tvoje ime ili inicijali"
+      },
+      "message": {
+        "label": "Poruka",
+        "optional": "(opciono)",
+        "placeholder": "Napiši kratku poruku podrške…"
+      },
+      "anonymous": "Želim da donacija bude anonimna",
+      "submitButton": "Potvrdi demo donaciju",
+      "demoNotice": "Ovo je demo — nema naplate niti čuvanja podataka."
+    }
+  },
+    "PixelSelector": {
+    "hint": "Klikni na svetli kvadratić da ga izabereš",
+    "pinchHint": "Raširi dva prsta preko srca da ga uvećaš",
+    "zoomStatus": "Uvećanje prikaza je {percentage} procenata.",
+    "controls": {
+      "zoomOut": "Umanji prikaz srca",
+      "zoomIn": "Uvećaj prikaz srca",
+      "reset": "Vrati originalnu veličinu"
+    }
+  },
+  "InstagramStoryDialog": {
+    "modal": {
+      "closeLabel": "Zatvori Instagram Story"
+    },
+    "preview": {
+      "ariaLabel": "Pregled Instagram Story objave",
+      "eyebrow": "Moj trag u srcu"
+    },
+    "story": {
+      "brandName": "izaberi pixel",
+      "hashtag": "#PIXELPOPIXEL",
+      "title": {
+        "first": "Jedan piksel.",
+        "highlighted": "Jedan korak",
+        "last": "bliže cilju."
+      },
+      "tagline": "Postani i ti deo zajedničke slike dobrote.",
+      "pixelLabel": "MOJ PIKSEL DOBROTE",
+      "anonymousDonor": "Anonimni donator",
+      "defaultMessage": "Hvala što zajedno stvaramo promenu.",
+      "footerAction": "Izaberi svoj piksel",
+      "footerDomain": "srce-kragujevca.rs",
+      "joinButton": "PRIDRUŽI SE",
+      "fileName": "moj-piksel"
+    },
+    "controls": {
+      "eyebrow": "Tvoj personalizovani Story",
+      "title": "Spreman za Instagram.",
+      "description": "Story je pripremljen u formatu 1080 × 1920 px. Sadrži označen kupljeni piksel, tvoje ime i poruku podrške.",
+      "steps": {
+        "share": "Pritisni dugme za deljenje.",
+        "instagram": "Na telefonu izaberi Instagram.",
+        "publish": "Odaberi Story i objavi."
+      },
+      "preparing": "Pripremamo Story…",
+      "shareButton": "Podeli na Instagram",
+      "downloadButton": "Preuzmi Story kao PNG",
+      "helper": "Na računaru ili nepodržanom telefonu Story će se automatski preuzeti."
+    },
+    "sharing": {
+      "title": "Moj piksel dobrote",
+      "text": "Postani i ti deo našeg srca. #PixelPoPixel"
+    },
+    "status": {
+      "preparationFailed": "Story trenutno nije mogao da se pripremi.",
+      "downloaded": "Story je preuzet. Sada ga možeš dodati u Instagram Story.",
+      "shared": "Story je prosleđen. Izaberi Instagram Story u meniju za deljenje.",
+      "cancelled": "Deljenje je otkazano."
+    },
+    "errors": {
+      "canvasUnsupported": "Canvas nije podržan.",
+      "imageGeneration": "Slika nije mogla da se generiše."
+    }
+  },
+    "DonationBadge": {
+    "label": "Moj piksel dobrote",
+    "pixelAriaLabel": "Piksel broj {pixel}"
+  },
+    "PixelHeart": {
+    "ariaLabel": "Srce sastavljeno od piksela",
+    "soldAriaLabel": "Piksel {pixel}, donator {donor}",
+    "availableAriaLabel": "Izaberi slobodan piksel {pixel}",
+    "soldTitle": "{donor} • Hvala!",
+    "availableTitle": "Slobodan piksel #{pixel}",
+    "donors": {
+      "mina": "Mina P.",
+      "vukAndTara": "Vuk i Tara",
+      "ilicFamily": "Porodica Ilić",
+      "luka": "Luka M.",
+      "anaAndOgnjen": "Ana i Ognjen",
+      "anonymous": "Anonimno"
+    }
   }
 }

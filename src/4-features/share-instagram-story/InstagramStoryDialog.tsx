@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 
 import type { DonationRecord } from "@/src/5-entities/donation/DonationBadge";
 import {
@@ -15,6 +16,24 @@ import { Modal } from "@/src/6-shared/ui/modal/Modal";
 type InstagramStoryDialogProps = {
   donation: DonationRecord;
   onClose: () => void;
+};
+
+type StoryCopy = {
+  brandName: string;
+  hashtag: string;
+  titleFirst: string;
+  titleHighlighted: string;
+  titleLast: string;
+  tagline: string;
+  pixelLabel: string;
+  anonymousDonor: string;
+  defaultMessage: string;
+  footerAction: string;
+  footerDomain: string;
+  joinButton: string;
+  fileName: string;
+  canvasError: string;
+  imageError: string;
 };
 
 const COLORS = {
@@ -107,6 +126,7 @@ const drawPixelLogo = (
 
 const createInstagramStory = async (
   donation: DonationRecord,
+  copy: StoryCopy,
 ): Promise<File> => {
   await document.fonts.ready;
 
@@ -119,7 +139,7 @@ const createInstagramStory = async (
     const context = canvas.getContext("2d");
 
     if (!context) {
-      reject(new Error("Canvas nije podržan."));
+      reject(new Error(copy.canvasError));
       return;
     }
 
@@ -139,29 +159,29 @@ const createInstagramStory = async (
     context.textAlign = "left";
     context.fillStyle = COLORS.navy;
     context.font = '800 29px "Sora", Arial, sans-serif';
-    context.fillText("izaberi pixel", 160, 108);
+    context.fillText(copy.brandName, 160, 108);
 
     context.textAlign = "right";
     context.fillStyle = COLORS.red;
     context.font = '800 21px "Sora", Arial, sans-serif';
-    context.fillText("#PIXELPOPIXEL", 1004, 108);
+    context.fillText(copy.hashtag, 1004, 108);
 
     context.textAlign = "center";
     context.fillStyle = COLORS.navy;
     context.font = '800 88px "Sora", Arial, sans-serif';
-    context.fillText("Jedan piksel.", 540, 240);
+    context.fillText(copy.titleFirst, 540, 240);
 
     context.fillStyle = COLORS.red;
     context.font = '700 88px "Fraunces", Georgia, serif';
-    context.fillText("Jedan korak", 540, 330);
+    context.fillText(copy.titleHighlighted, 540, 330);
 
     context.fillStyle = COLORS.navy;
     context.font = '800 88px "Sora", Arial, sans-serif';
-    context.fillText("bliže cilju.", 540, 420);
+    context.fillText(copy.titleLast, 540, 420);
 
     context.fillStyle = COLORS.muted;
     context.font = '400 28px "Sora", Arial, sans-serif';
-    context.fillText("Postani i ti deo zajedničke slike dobrote.", 540, 474);
+    context.fillText(copy.tagline, 540, 474);
 
     const cell = 15;
     const gap = 3;
@@ -219,14 +239,14 @@ const createInstagramStory = async (
     context.textAlign = "left";
     context.fillStyle = COLORS.red;
     context.font = '800 21px "Sora", Arial, sans-serif';
-    context.fillText("MOJ PIKSEL DOBROTE", 404, 1368);
+    context.fillText(copy.pixelLabel, 404, 1368);
 
     context.fillStyle = COLORS.navy;
     context.font = '700 48px "Fraunces", Georgia, serif';
 
     drawWrappedText(
       context,
-      donation.name || "Anonimni donator",
+      donation.name || copy.anonymousDonor,
       404,
       1432,
       500,
@@ -240,7 +260,7 @@ const createInstagramStory = async (
       context,
       donation.message
         ? `„${donation.message}”`
-        : "Hvala što zajedno stvaramo promenu.",
+        : copy.defaultMessage,
       404,
       1542,
       500,
@@ -253,11 +273,11 @@ const createInstagramStory = async (
     context.textAlign = "left";
     context.fillStyle = COLORS.white;
     context.font = '800 30px "Sora", Arial, sans-serif';
-    context.fillText("Izaberi svoj piksel", 76, 1842);
+    context.fillText(copy.footerAction, 76, 1842);
 
     context.fillStyle = "rgba(255, 255, 255, 0.55)";
     context.font = '400 20px "Sora", Arial, sans-serif';
-    context.fillText("srce-kragujevca.rs", 76, 1880);
+    context.fillText(copy.footerDomain, 76, 1880);
 
     context.fillStyle = COLORS.red;
     roundedRect(context, 814, 1805, 190, 64, 12);
@@ -265,17 +285,17 @@ const createInstagramStory = async (
     context.textAlign = "center";
     context.fillStyle = COLORS.white;
     context.font = '800 22px "Sora", Arial, sans-serif';
-    context.fillText("PRIDRUŽI SE →", 909, 1846);
+    context.fillText(`${copy.joinButton} →`, 909, 1846);
 
     canvas.toBlob(
       (blob) => {
         if (!blob) {
-          reject(new Error("Slika nije mogla da se generiše."));
+          reject(new Error(copy.imageError));
           return;
         }
 
         resolve(
-          new File([blob], `moj-piksel-${donation.id}.png`, {
+          new File([blob], `${copy.fileName}-${donation.id}.png`, {
             type: "image/png",
           }),
         );
@@ -290,6 +310,8 @@ function InstagramStoryDialogContent({
   donation,
   onClose,
 }: InstagramStoryDialogProps) {
+  const t = useTranslations("InstagramStoryDialog");
+  const locale = useLocale();
   const [storyFile, setStoryFile] = useState<File | null>(null);
   const [shareStatus, setShareStatus] = useState("");
   const [isPreparing, setIsPreparing] = useState(true);
@@ -297,7 +319,25 @@ function InstagramStoryDialogContent({
   useEffect(() => {
     let cancelled = false;
 
-    createInstagramStory(donation)
+    const copy: StoryCopy = {
+      brandName: t("story.brandName"),
+      hashtag: t("story.hashtag"),
+      titleFirst: t("story.title.first"),
+      titleHighlighted: t("story.title.highlighted"),
+      titleLast: t("story.title.last"),
+      tagline: t("story.tagline"),
+      pixelLabel: t("story.pixelLabel"),
+      anonymousDonor: t("story.anonymousDonor"),
+      defaultMessage: t("story.defaultMessage"),
+      footerAction: t("story.footerAction"),
+      footerDomain: t("story.footerDomain"),
+      joinButton: t("story.joinButton"),
+      fileName: t("story.fileName"),
+      canvasError: t("errors.canvasUnsupported"),
+      imageError: t("errors.imageGeneration"),
+    };
+
+    createInstagramStory(donation, copy)
       .then((file) => {
         if (!cancelled) {
           setStoryFile(file);
@@ -307,14 +347,14 @@ function InstagramStoryDialogContent({
       .catch(() => {
         if (!cancelled) {
           setIsPreparing(false);
-          setShareStatus("Template trenutno nije mogao da se pripremi.");
+          setShareStatus(t("status.preparationFailed"));
         }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [donation]);
+  }, [donation, locale, t]);
 
   const downloadStory = () => {
     if (!storyFile) {
@@ -332,7 +372,7 @@ function InstagramStoryDialogContent({
       URL.revokeObjectURL(url);
     }, 100);
 
-    setShareStatus("Story je preuzet. Sada ga možeš dodati u Instagram Story.");
+    setShareStatus(t("status.downloaded"));
   };
 
   const shareToInstagram = async () => {
@@ -351,16 +391,14 @@ function InstagramStoryDialogContent({
 
       await navigator.share({
         files: [storyFile],
-        title: "Moj piksel dobrote",
-        text: "Postani i ti deo našeg srca. #PixelPoPixel",
+        title: t("sharing.title"),
+        text: t("sharing.text"),
       });
 
-      setShareStatus(
-        "Template je prosleđen. Izaberi Instagram Story u meniju za deljenje.",
-      );
+      setShareStatus(t("status.shared"));
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
-        setShareStatus("Deljenje je otkazano.");
+        setShareStatus(t("status.cancelled"));
         return;
       }
 
@@ -368,10 +406,16 @@ function InstagramStoryDialogContent({
     }
   };
 
+  const steps = [
+    t("controls.steps.share"),
+    t("controls.steps.instagram"),
+    t("controls.steps.publish"),
+  ];
+
   return (
     <Modal
       labelledBy="story-title"
-      closeLabel="Zatvori Instagram Story"
+      closeLabel={t("modal.closeLabel")}
       overlayClassName="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-[#0D2734]/75 p-4 backdrop-blur-sm sm:p-6"
       dialogClassName="relative grid w-full max-w-5xl overflow-hidden rounded-[32px] bg-[#FFF6EB] shadow-[0_30px_100px_rgba(13,39,52,0.35)] lg:grid-cols-[minmax(320px,0.8fr)_minmax(0,1.2fr)]"
       closeButtonClassName="absolute right-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-[#0D2734]/10 bg-white text-xl text-[#0D2734] shadow-sm transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]"
@@ -379,7 +423,7 @@ function InstagramStoryDialogContent({
     >
       <div className="flex items-center justify-center bg-[#F4E8DD] p-5 sm:p-8">
         <div
-          aria-label="Pregled Instagram Story objave"
+          aria-label={t("preview.ariaLabel")}
           className="relative aspect-[9/16] w-full max-w-[340px] overflow-hidden rounded-[28px] bg-[#FFF6EB] shadow-[0_24px_60px_rgba(13,39,52,0.18)]"
         >
           <div
@@ -406,28 +450,30 @@ function InstagramStoryDialogContent({
                 </span>
 
                 <strong className="text-xs font-extrabold text-[#0D2734]">
-                  izaberi pixel
+                  {t("story.brandName")}
                 </strong>
               </div>
 
               <small className="text-[8px] font-extrabold uppercase tracking-[0.1em] text-[#D6384B]">
-                #PixelPoPixel
+                {t("story.hashtag")}
               </small>
             </header>
 
             <div className="mt-7 text-center">
               <p className="text-[9px] font-extrabold uppercase tracking-[0.12em] text-[#D6384B]">
-                Moj trag u srcu
+                {t("preview.eyebrow")}
               </p>
 
               <h3 className="mt-3 font-serif text-[28px] font-bold leading-[1.05] tracking-[-0.03em] text-[#0D2734]">
-                Jedan piksel.
-                <span className="block text-[#D6384B]">Jedan korak</span>
-                bliže cilju.
+                {t("story.title.first")}
+                <span className="block text-[#D6384B]">
+                  {t("story.title.highlighted")}
+                </span>
+                {t("story.title.last")}
               </h3>
 
               <p className="mt-3 text-[10px] text-[#6D7475]">
-                Postani i ti deo zajedničke slike dobrote.
+                {t("story.tagline")}
               </p>
             </div>
 
@@ -454,11 +500,11 @@ function InstagramStoryDialogContent({
 
                 <div className="min-w-0">
                   <p className="text-[8px] font-extrabold uppercase tracking-[0.1em] text-[#D6384B]">
-                    Moj piksel dobrote
+                    {t("story.pixelLabel")}
                   </p>
 
                   <strong className="mt-1 block truncate font-serif text-lg text-[#0D2734]">
-                    {donation.name || "Anonimni donator"}
+                    {donation.name || t("story.anonymousDonor")}
                   </strong>
 
                   {donation.message && (
@@ -473,16 +519,16 @@ function InstagramStoryDialogContent({
             <footer className="-mx-6 -mb-6 mt-5 flex items-center justify-between gap-3 bg-[#0D2734] px-6 py-4 text-white">
               <div>
                 <strong className="block text-[10px]">
-                  Izaberi svoj piksel
+                  {t("story.footerAction")}
                 </strong>
 
                 <span className="mt-1 block text-[8px] text-white/55">
-                  srce-kragujevca.rs
+                  {t("story.footerDomain")}
                 </span>
               </div>
 
               <span className="rounded-lg bg-[#D6384B] px-3 py-2 text-[8px] font-extrabold uppercase tracking-wide">
-                Pridruži se →
+                {t("story.joinButton")} →
               </span>
             </footer>
           </div>
@@ -491,27 +537,22 @@ function InstagramStoryDialogContent({
 
       <div className="flex flex-col justify-center px-6 py-10 sm:px-10 lg:px-12">
         <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#D6384B]">
-          Tvoj personalizovani Story
+          {t("controls.eyebrow")}
         </p>
 
         <h2
           id="story-title"
           className="mt-4 text-4xl font-extrabold leading-tight tracking-[-0.04em] text-[#0D2734]"
         >
-          Spreman za Instagram.
+          {t("controls.title")}
         </h2>
 
         <p className="mt-4 max-w-lg text-sm leading-7 text-[#6D7475]">
-          Story je pripremljen u formatu 1080 × 1920 px. Sadrži označen kupljeni
-          piksel, tvoje ime i poruku podrške.
+          {t("controls.description")}
         </p>
 
         <ol className="mt-8 space-y-4">
-          {[
-            "Pritisni dugme za deljenje.",
-            "Na telefonu izaberi Instagram.",
-            "Odaberi Story i objavi.",
-          ].map((step, index) => (
+          {steps.map((step, index) => (
             <li
               key={step}
               className="flex items-center gap-4 text-sm font-semibold text-[#0D2734]"
@@ -537,7 +578,7 @@ function InstagramStoryDialogContent({
                 aria-hidden="true"
                 className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white"
               />
-              Pripremamo Story…
+              {t("controls.preparing")}
             </>
           ) : (
             <>
@@ -559,7 +600,7 @@ function InstagramStoryDialogContent({
                   stroke="none"
                 />
               </svg>
-              Podeli na Instagram
+              {t("controls.shareButton")}
             </>
           )}
         </button>
@@ -570,12 +611,12 @@ function InstagramStoryDialogContent({
           disabled={!storyFile}
           className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border-2 border-[#0D2734] px-6 text-sm font-extrabold text-[#0D2734] transition hover:bg-[#0D2734] hover:text-white disabled:cursor-wait disabled:opacity-40"
         >
-          Preuzmi Story kao PNG
+          {t("controls.downloadButton")}
           <span aria-hidden="true">↓</span>
         </button>
 
         <p className="mt-4 text-center text-xs leading-5 text-[#6D7475]">
-          Na računaru ili nepodržanom telefonu Story će se automatski preuzeti.
+          {t("controls.helper")}
         </p>
 
         {shareStatus && (

@@ -1,10 +1,19 @@
 "use client";
 
 import {
+  type FormEvent,
+  type RefObject,
+  useState,
+} from "react";
+import {
+  useLocale,
+  useTranslations,
+} from "next-intl";
+
+import {
   PIXEL_PALETTE,
   PIXEL_PRICE,
 } from "@/src/5-entities/heart-pixel/PixelHeart";
-import { type FormEvent, type RefObject, useState } from "react";
 
 export type DonationDraft = {
   color: string;
@@ -20,9 +29,6 @@ type DonationFormProps = {
   onReset: () => void;
   onShareStory: () => void;
 };
-
-const formatRsd = (value: number) =>
-  `${new Intl.NumberFormat("sr-RS").format(value)} RSD`;
 
 const fieldLabelClass =
   "mb-2 block text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#0D2734]";
@@ -45,12 +51,28 @@ export function DonationForm({
   onReset,
   onShareStory,
 }: DonationFormProps) {
+  const t = useTranslations("DonationForm");
+  const locale = useLocale();
+
   const [donorName, setDonorName] = useState("");
   const [message, setMessage] = useState("");
   const [anonymous, setAnonymous] = useState(false);
-  const [selectedColor, setSelectedColor] = useState(PIXEL_PALETTE[0]);
+  const [selectedColor, setSelectedColor] = useState(
+    PIXEL_PALETTE[0],
+  );
 
-  const submitDonation = (event: FormEvent<HTMLFormElement>) => {
+  const formattedPrice = new Intl.NumberFormat(
+    locale === "sr" ? "sr-RS" : "en-US",
+    {
+      style: "currency",
+      currency: "RSD",
+      maximumFractionDigits: 0,
+    },
+  ).format(PIXEL_PRICE);
+
+  const submitDonation = (
+    event: FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
 
     if (selectedPixel === null) {
@@ -60,9 +82,10 @@ export function DonationForm({
     onPurchase({
       color: selectedColor,
       name: anonymous
-        ? "Anonimni donator"
-        : donorName.trim() || "Donator dobrote",
-      message: message.trim() || "Jedan piksel. Jedno dobro delo.",
+        ? t("defaults.anonymousDonor")
+        : donorName.trim() || t("defaults.donor"),
+      message:
+        message.trim() || t("defaults.message"),
     });
   };
 
@@ -98,17 +121,22 @@ export function DonationForm({
           </span>
 
           <p className="mt-6 text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#D6384B]">
-            Hvala!
+            {t("success.eyebrow")}
           </p>
 
           <h3 className="mt-3 max-w-sm font-serif text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0D2734]">
-            Tvoj piksel sada kuca sa svima.
+            {t("success.title")}
           </h3>
 
           <p className="mt-4 max-w-sm text-sm leading-6 text-[#6D7475]">
-            Piksel <strong className="text-[#0D2734]">#{successPixel}</strong>{" "}
-            je dodat zajedničkom srcu. U pravoj verziji ovde bi usledila potvrda
-            uplate i digitalna zahvalnica.
+            {t.rich("success.description", {
+              pixel: successPixel,
+              strong: (children) => (
+                <strong className="text-[#0D2734]">
+                  {children}
+                </strong>
+              ),
+            })}
           </p>
 
           <div className="mt-8 flex w-full max-w-sm flex-col gap-3">
@@ -134,7 +162,13 @@ export function DonationForm({
                 stroke="currentColor"
                 strokeWidth={2}
               >
-                <rect x="3" y="3" width="18" height="18" rx="5" />
+                <rect
+                  x="3"
+                  y="3"
+                  width="18"
+                  height="18"
+                  rx="5"
+                />
                 <circle cx="12" cy="12" r="4" />
                 <circle
                   cx="17.5"
@@ -144,7 +178,8 @@ export function DonationForm({
                   stroke="none"
                 />
               </svg>
-              Podeli na Instagram
+
+              {t("success.shareButton")}
             </button>
 
             <button
@@ -160,50 +195,62 @@ export function DonationForm({
                 "focus-visible:ring-[#F5A33B] focus-visible:ring-offset-2",
               ].join(" ")}
             >
-              Oboji još jedan piksel
+              {t("success.resetButton")}
             </button>
           </div>
         </div>
       ) : (
         <form onSubmit={submitDonation}>
           <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#D6384B]">
-            Tvoj trag u srcu
+            {t("form.eyebrow")}
           </p>
 
           <div className="mt-3 flex items-start justify-between gap-4">
             <h3 className="font-serif text-[28px] font-bold leading-tight tracking-[-0.03em] text-[#0D2734] sm:text-[32px]">
               {selectedPixel !== null
-                ? `Piksel #${selectedPixel}`
-                : "Izaberi piksel na srcu"}
+                ? t("form.selectedPixel", {
+                    pixel: selectedPixel,
+                  })
+                : t("form.noPixelSelected")}
             </h3>
 
             <strong className="mt-1 shrink-0 rounded-lg bg-[#D6384B] px-3 py-2 text-xs font-extrabold text-white">
-              {formatRsd(PIXEL_PRICE)}
+              {formattedPrice}
             </strong>
           </div>
 
           <p className="mt-3 text-sm leading-6 text-[#6D7475]">
             {selectedPixel !== null
-              ? "Sjajan izbor. Sada mu dodaj boju, ime i kratku poruku."
-              : "Klikni na slobodan kvadratić u srcu. Zatim možeš da ga personalizuješ."}
+              ? t("form.selectedIntroduction")
+              : t("form.emptyIntroduction")}
           </p>
 
           <fieldset
             disabled={selectedPixel === null}
             className="mt-7 disabled:opacity-55"
           >
-            <legend className={fieldLabelClass}>Boja piksela</legend>
+            <legend className={fieldLabelClass}>
+              {t("form.color.label")}
+            </legend>
 
             <div className="flex flex-wrap gap-3">
               {PIXEL_PALETTE.map((color, index) => {
-                const active = selectedColor === color;
+                const active =
+                  selectedColor === color;
 
                 return (
                   <button
                     key={color}
                     type="button"
-                    onClick={() => setSelectedColor(color)}
-                    aria-label={`Izaberi boju ${index + 1}`}
+                    onClick={() =>
+                      setSelectedColor(color)
+                    }
+                    aria-label={t(
+                      "form.color.selectAriaLabel",
+                      {
+                        number: index + 1,
+                      },
+                    )}
                     aria-pressed={active}
                     className={[
                       "relative h-9 w-9 rounded-md border-[3px] border-white",
@@ -218,7 +265,13 @@ export function DonationForm({
                       backgroundColor: color,
                     }}
                   >
-                    {active && <span className="sr-only">Izabrana boja</span>}
+                    {active && (
+                      <span className="sr-only">
+                        {t(
+                          "form.color.selectedLabel",
+                        )}
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -226,35 +279,51 @@ export function DonationForm({
           </fieldset>
 
           <div className="mt-7">
-            <label htmlFor="donor-name" className={fieldLabelClass}>
-              Ime na zidu zahvalnosti
+            <label
+              htmlFor="donor-name"
+              className={fieldLabelClass}
+            >
+              {t("form.name.label")}
             </label>
 
             <input
               id="donor-name"
               type="text"
               value={donorName}
-              onChange={(event) => setDonorName(event.target.value)}
-              placeholder="Tvoje ime ili inicijali"
+              onChange={(event) =>
+                setDonorName(event.target.value)
+              }
+              placeholder={t("form.name.placeholder")}
               maxLength={32}
               required={!anonymous}
-              disabled={selectedPixel === null || anonymous}
+              disabled={
+                selectedPixel === null || anonymous
+              }
               className={`${fieldClass} h-12`}
             />
           </div>
 
           <div className="mt-6">
-            <label htmlFor="donation-message" className={fieldLabelClass}>
-              Poruka{" "}
-              <span className="font-semibold text-[#9DA4A5]">(opciono)</span>
+            <label
+              htmlFor="donation-message"
+              className={fieldLabelClass}
+            >
+              {t("form.message.label")}{" "}
+              <span className="font-semibold text-[#9DA4A5]">
+                {t("form.message.optional")}
+              </span>
             </label>
 
             <div className="relative">
               <textarea
                 id="donation-message"
                 value={message}
-                onChange={(event) => setMessage(event.target.value)}
-                placeholder="Napiši kratku poruku podrške…"
+                onChange={(event) =>
+                  setMessage(event.target.value)
+                }
+                placeholder={t(
+                  "form.message.placeholder",
+                )}
                 maxLength={80}
                 disabled={selectedPixel === null}
                 rows={4}
@@ -271,7 +340,9 @@ export function DonationForm({
             <input
               type="checkbox"
               checked={anonymous}
-              onChange={(event) => setAnonymous(event.target.checked)}
+              onChange={(event) =>
+                setAnonymous(event.target.checked)
+              }
               disabled={selectedPixel === null}
               className={[
                 "h-4 w-4 shrink-0 cursor-pointer",
@@ -282,7 +353,7 @@ export function DonationForm({
               ].join(" ")}
             />
 
-            <span>Želim da donacija bude anonimna</span>
+            <span>{t("form.anonymous")}</span>
           </label>
 
           <button
@@ -302,15 +373,18 @@ export function DonationForm({
               "focus-visible:ring-[#D6384B] focus-visible:ring-offset-2",
             ].join(" ")}
           >
-            Potvrdi demo donaciju
+            {t("form.submitButton")}
             <span aria-hidden="true">→</span>
           </button>
 
           <p className="mt-4 text-center text-[10px] leading-4 text-[#6D7475]">
-            <span aria-hidden="true" className="text-[#D6384B]">
+            <span
+              aria-hidden="true"
+              className="text-[#D6384B]"
+            >
               ◈
             </span>{" "}
-            Ovo je demo — nema naplate niti čuvanja podataka.
+            {t("form.demoNotice")}
           </p>
         </form>
       )}

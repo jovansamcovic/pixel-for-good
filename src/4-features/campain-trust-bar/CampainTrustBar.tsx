@@ -1,24 +1,28 @@
+import { useTranslations } from "next-intl";
+
 export function CampaignTrustBar() {
+  const t = useTranslations("CampaignTrustBar");
+
   return (
     <section
-      aria-label="Pouzdanost i transparentnost kampanje"
+      aria-label={t("ariaLabel")}
       className="bg-[#FFF6EB] px-5 py-8 sm:px-8 lg:px-12"
     >
       <div className="mx-auto grid max-w-7xl gap-7 rounded-[1.75rem] bg-[#0D2734] px-6 py-7 text-white sm:px-8 lg:grid-cols-[1.5fr_1fr_1fr] lg:items-center lg:gap-10">
         <div>
           <h2 className="text-xs font-extrabold uppercase tracking-[0.08em]">
-            Svaka uplata je javno evidentirana
+            {t("introduction.title")}
           </h2>
 
           <p className="mt-2 text-sm leading-6 text-white/70">
-            Jasan cilj, redovni izveštaji i direktna uplata.
+            {t("introduction.description")}
           </p>
         </div>
 
         <div className="flex items-center gap-4">
           <span
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D6384B]"
             aria-hidden="true"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D6384B]"
           >
             <svg
               viewBox="0 0 24 24"
@@ -34,17 +38,20 @@ export function CampaignTrustBar() {
           </span>
 
           <div>
-            <h3 className="text-sm font-bold">Sigurna uplata</h3>
+            <h3 className="text-sm font-bold">
+              {t("securePayment.title")}
+            </h3>
+
             <p className="mt-1 text-xs text-white/60">
-              Bez skrivenih troškova
+              {t("securePayment.description")}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
           <span
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F5A33B]"
             aria-hidden="true"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F5A33B]"
           >
             <svg
               viewBox="0 0 24 24"
@@ -62,9 +69,12 @@ export function CampaignTrustBar() {
           </span>
 
           <div>
-            <h3 className="text-sm font-bold">Javan napredak</h3>
+            <h3 className="text-sm font-bold">
+              {t("publicProgress.title")}
+            </h3>
+
             <p className="mt-1 text-xs text-white/60">
-              Ažurirano svakog dana
+              {t("publicProgress.description")}
             </p>
           </div>
         </div>

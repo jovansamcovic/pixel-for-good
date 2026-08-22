@@ -1,4 +1,9 @@
+import { useTranslations } from "next-intl";
+
 export default function Footer() {
+  const t = useTranslations("Footer");
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="bg-[#0D2734] px-5 py-10 text-white sm:px-8 lg:px-12">
       <div className="mx-auto max-w-[1440px]">
@@ -6,8 +11,8 @@ export default function Footer() {
           <div className="max-w-md">
             <a
               href="#top"
-              aria-label="Izaberi pixel — povratak na početak"
-              className="inline-flex items-center gap-3"
+              aria-label={t("homeAriaLabel")}
+              className="inline-flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5A33B]"
             >
               <span
                 aria-hidden="true"
@@ -24,26 +29,25 @@ export default function Footer() {
               </span>
 
               <span className="text-lg font-extrabold tracking-[-0.03em]">
-                izaberi pixel
+                {t("brandName")}
               </span>
             </a>
 
             <p className="mt-5 max-w-sm text-sm leading-6 text-white/60">
-              Jedan piksel. Jedan korak bliže cilju. Zajedno stvaramo
-              vidljivu sliku dobrote.
+              {t("tagline")}
             </p>
           </div>
         </div>
 
         <div className="flex flex-col gap-5 pt-7 text-xs leading-5 text-white/45 sm:flex-row sm:items-end sm:justify-between">
           <p className="max-w-2xl">
-            Demo koncept humanitarne platforme. Svi nazivi, iznosi i
-            donatori su ilustrativni. Stvarne uplate i čuvanje ličnih
-            podataka nisu omogućeni.
+            {t("disclaimer")}
           </p>
 
           <p className="shrink-0">
-            © {new Date().getFullYear()} Izaberi pixel
+            {t("copyright", {
+              year: currentYear,
+            })}
           </p>
         </div>
       </div>

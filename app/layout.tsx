@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Cormorant_Garamond, Dancing_Script } from "next/font/google";
+import {
+  Cormorant_Garamond,
+  Dancing_Script,
+  Geist,
+  Geist_Mono,
+} from "next/font/google";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,48 +18,98 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Vedrana Marković Atelier",
-  description: "Arhitektonski i interijerstki atelje osnovan u Kragujevcu. Projektovanje enterijera za stambene i poslovne objekte.",
-  icons: {
-    icon: "/favicon.webp",
-  },
-  keywords: ["arhitektura", "enterijer", "dizajn", "Kragujevac", "Vedrana Marković", "atelje", "interior design"],
-  authors: [{ name: "Vedrana Marković" }],
-  creator: "Vedrana Marković Atelier",
-  openGraph: {
-    title: "Vedrana Marković Atelier",
-    description: "Arhitektonski i interijerstki atelje osnovan u Kragujevcu.",
-    url: "https://vedrana-markovic-atelier.studio",
-    siteName: "Vedrana Marković Atelier",
-    locale: "sr_RS",
-    type: "website",
-  },
-};
-
 const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   weight: ["300"],
   variable: "--font-cormorant",
 });
 
 const dancing = Dancing_Script({
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   weight: ["400"],
   variable: "--font-dancing",
 });
 
+export const metadata: Metadata = {
+  title: {
+    default: "Izaberi pixel",
+    template: "%s | Izaberi pixel",
+  },
+  description:
+    "Humanitarna platforma za prikupljanje sredstava kupovinom piksela. Izaberi svoj piksel i postani deo zajedničke slike dobrote.",
+  applicationName: "Izaberi pixel",
+  keywords: [
+    "humanitarna akcija",
+    "humanitarne donacije",
+    "donacije",
+    "kupovina piksela",
+    "piksel dobrote",
+    "izaberi pixel",
+    "pixel po pixel",
+    "Kragujevac",
+  ],
+  authors: [
+    {
+      name: "Izaberi pixel",
+    },
+  ],
+  creator: "Izaberi pixel",
+  publisher: "Izaberi pixel",
+  icons: {
+    icon: "/favicon.webp",
+    shortcut: "/favicon.webp",
+    apple: "/favicon.webp",
+  },
+  openGraph: {
+    title: "Izaberi pixel",
+    description:
+      "Jedan piksel. Jedan korak bliže cilju. Izaberi svoj piksel i ostavi trag u zajedničkom srcu.",
+    siteName: "Izaberi pixel",
+    locale: "sr_RS",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.webp",
+        width: 1200,
+        height: 630,
+        alt: "Izaberi pixel — humanitarna akcija",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Izaberi pixel",
+    description:
+      "Izaberi svoj piksel i postani deo zajedničke slike dobrote.",
+    images: ["/og-image.webp"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+type RootLayoutProps = Readonly<{
+  children: React.ReactNode;
+}>;
+
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: RootLayoutProps) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} ${dancing.variable} h-full antialiased`}
+      lang="sr"
+      className={[
+        geistSans.variable,
+        geistMono.variable,
+        cormorant.variable,
+        dancing.variable,
+        "h-full antialiased",
+      ].join(" ")}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        {children}
+      </body>
     </html>
   );
 }

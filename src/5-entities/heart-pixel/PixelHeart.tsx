@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { useTranslations } from "next-intl";
 
 export type HeartPixel = {
   id: number;
@@ -32,10 +33,23 @@ export const HEART_PIXELS: HeartPixel[] = (() => {
   const pixels: HeartPixel[] = [];
   let id = 0;
 
-  for (let row = 0; row < HEART_ROWS; row += 1) {
-    for (let col = 0; col < HEART_COLUMNS; col += 1) {
-      const x = (col / (HEART_COLUMNS - 1)) * 2.5 - 1.25;
-      const y = 1.2 - (row / (HEART_ROWS - 1)) * 2.4;
+  for (
+    let row = 0;
+    row < HEART_ROWS;
+    row += 1
+  ) {
+    for (
+      let col = 0;
+      col < HEART_COLUMNS;
+      col += 1
+    ) {
+      const x =
+        (col / (HEART_COLUMNS - 1)) * 2.5 -
+        1.25;
+
+      const y =
+        1.2 -
+        (row / (HEART_ROWS - 1)) * 2.4;
 
       const inside =
         Math.pow(x * x + y * y - 1, 3) -
@@ -56,7 +70,8 @@ export const HEART_PIXELS: HeartPixel[] = (() => {
 })();
 
 export const isInitiallySold = (id: number) =>
-  ((id * 37 + 13) % 1_000) < STARTING_SOLD;
+  ((id * 37 + 13) % 1_000) <
+  STARTING_SOLD;
 
 type PixelHeartProps = {
   highlightedPixel?: number;
@@ -81,10 +96,21 @@ export function PixelHeart({
   onSelect,
   className = "",
 }: PixelHeartProps) {
+  const t = useTranslations("PixelHeart");
+
+  const donorNames = [
+    t("donors.mina"),
+    t("donors.vukAndTara"),
+    t("donors.ilicFamily"),
+    t("donors.luka"),
+    t("donors.anaAndOgnjen"),
+    t("donors.anonymous"),
+  ];
+
   return (
     <div
       role={interactive ? "group" : "img"}
-      aria-label="Srce sastavljeno od piksela"
+      aria-label={t("ariaLabel")}
       className={[
         "grid aspect-[42/41] w-full max-w-[560px]",
         "grid-cols-[repeat(42,minmax(0,1fr))]",
@@ -95,17 +121,25 @@ export function PixelHeart({
     >
       {HEART_PIXELS.map((pixel) => {
         const pixelNumber = pixel.id + 1;
-        const purchasedColor = purchasedPixels[pixelNumber];
+
+        const purchasedColor =
+          purchasedPixels[pixelNumber];
 
         const sold =
-          isInitiallySold(pixel.id) || Boolean(purchasedColor);
+          isInitiallySold(pixel.id) ||
+          Boolean(purchasedColor);
 
-        const selected = selectedPixel === pixelNumber;
-        const highlighted = highlightedPixel === pixelNumber;
+        const selected =
+          selectedPixel === pixelNumber;
+
+        const highlighted =
+          highlightedPixel === pixelNumber;
 
         const color =
           purchasedColor ??
-          PIXEL_PALETTE[pixel.id % PIXEL_PALETTE.length];
+          PIXEL_PALETTE[
+            pixel.id % PIXEL_PALETTE.length
+          ];
 
         const pixelStyle: PixelStyle = {
           "--pixel-column": pixel.col + 1,
@@ -141,7 +175,9 @@ export function PixelHeart({
         }
 
         const donor =
-          DONOR_NAMES[pixel.id % DONOR_NAMES.length];
+          donorNames[
+            pixel.id % donorNames.length
+          ];
 
         return (
           <button
@@ -152,13 +188,22 @@ export function PixelHeart({
             aria-pressed={selected}
             aria-label={
               sold
-                ? `Piksel ${pixelNumber}, donator ${donor}`
-                : `Izaberi slobodan piksel ${pixelNumber}`
+                ? t("soldAriaLabel", {
+                    pixel: pixelNumber,
+                    donor,
+                  })
+                : t("availableAriaLabel", {
+                    pixel: pixelNumber,
+                  })
             }
             title={
               sold
-                ? `${donor} • Hvala!`
-                : `Slobodan piksel #${pixelNumber}`
+                ? t("soldTitle", {
+                    donor,
+                  })
+                : t("availableTitle", {
+                    pixel: pixelNumber,
+                  })
             }
             onClick={() => {
               if (!sold) {
