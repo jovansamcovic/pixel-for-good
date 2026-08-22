@@ -56,9 +56,12 @@ export const metadata: Metadata = {
   creator: "Izaberi pixel",
   publisher: "Izaberi pixel",
   icons: {
-    icon: "/favicon.webp",
-    shortcut: "/favicon.webp",
-    apple: "/favicon.webp",
+    icon: {
+      url: "/favicon.png",
+      type: "image/png",
+    },
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
   openGraph: {
     title: "Izaberi pixel",
@@ -79,8 +82,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Izaberi pixel",
-    description:
-      "Izaberi svoj piksel i postani deo zajedničke slike dobrote.",
+    description: "Izaberi svoj piksel i postani deo zajedničke slike dobrote.",
     images: ["/og-image.webp"],
   },
   robots: {
@@ -93,9 +95,7 @@ type RootLayoutProps = Readonly<{
   children: React.ReactNode;
 }>;
 
-export default function RootLayout({
-  children,
-}: RootLayoutProps) {
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="sr"
@@ -107,9 +107,7 @@ export default function RootLayout({
         "h-full antialiased",
       ].join(" ")}
     >
-      <body className="flex min-h-full flex-col">
-        {children}
-      </body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }
