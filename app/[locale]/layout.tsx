@@ -1,5 +1,3 @@
-import Header from '@/src/4-features/header/Header';
-import LoadingScreen from '@/src/4-features/LoadingScreen/LoadingScreen';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 

@@ -286,7 +286,7 @@ const createInstagramStory = async (
   });
 };
 
-export function InstagramStoryDialog({
+function InstagramStoryDialogContent({
   donation,
   onClose,
 }: InstagramStoryDialogProps) {
@@ -296,10 +296,6 @@ export function InstagramStoryDialog({
 
   useEffect(() => {
     let cancelled = false;
-
-    setStoryFile(null);
-    setShareStatus("");
-    setIsPreparing(true);
 
     createInstagramStory(donation)
       .then((file) => {
@@ -592,5 +588,14 @@ export function InstagramStoryDialog({
         )}
       </div>
     </Modal>
+  );
+}
+
+export function InstagramStoryDialog(props: InstagramStoryDialogProps) {
+  return (
+    <InstagramStoryDialogContent
+      key={props.donation.id}
+      {...props}
+    />
   );
 }
