@@ -39,39 +39,6 @@ export default function Header() {
             </span>
           </a>
 
-          {/* <nav
-            aria-label={t("navigationAriaLabel")}
-            className="hidden items-center gap-7 lg:flex"
-          >
-            <a
-              href="#kako-radi"
-              className="text-sm font-semibold text-[#0D2734]/75 transition-colors hover:text-[#D6384B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]"
-            >
-              {t("navigation.howItWorks")}
-            </a>
-
-            <a
-              href="#o-akciji"
-              className="text-sm font-semibold text-[#0D2734]/75 transition-colors hover:text-[#D6384B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]"
-            >
-              {t("navigation.about")}
-            </a>
-
-            <a
-              href="#transparentnost"
-              className="text-sm font-semibold text-[#0D2734]/75 transition-colors hover:text-[#D6384B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]"
-            >
-              {t("navigation.transparency")}
-            </a>
-
-            <a
-              href="#faq"
-              className="text-sm font-semibold text-[#0D2734]/75 transition-colors hover:text-[#D6384B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]"
-            >
-              {t("navigation.faq")}
-            </a>
-          </nav> */}
-
           <a
             href="#srce"
             className={[

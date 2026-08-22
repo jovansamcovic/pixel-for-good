@@ -171,7 +171,7 @@
       "demoNotice": "Ovo je demo — nema naplate niti čuvanja podataka."
     }
   },
-    "PixelSelector": {
+  "PixelSelector": {
     "hint": "Klikni na svetli kvadratić da ga izabereš",
     "pinchHint": "Raširi dva prsta preko srca da ga uvećaš",
     "zoomStatus": "Uvećanje prikaza je {percentage} procenata.",
@@ -187,9 +187,12 @@
     },
     "preview": {
       "ariaLabel": "Pregled Instagram Story objave",
-      "eyebrow": "Moj trag u srcu"
+      "eyebrow": "Moj trag u srcu",
+      "modalTitle": "Pregled Instagram Story objave",
+      "closeLabel": "Zatvori pregled Story objave"
     },
     "story": {
+      "linkStickerLabel": "Dodaj LINK",
       "brandName": "izaberi pixel",
       "hashtag": "#PIXELPOPIXEL",
       "title": {
@@ -207,6 +210,7 @@
       "fileName": "moj-piksel"
     },
     "controls": {
+      "previewButton": "Pregledaj Story",
       "eyebrow": "Tvoj personalizovani Story",
       "title": "Spreman za Instagram.",
       "description": "Story je pripremljen u formatu 1080 × 1920 px. Sadrži označen kupljeni piksel, tvoje ime i poruku podrške.",
@@ -235,11 +239,11 @@
       "imageGeneration": "Slika nije mogla da se generiše."
     }
   },
-    "DonationBadge": {
+  "DonationBadge": {
     "label": "Moj piksel dobrote",
     "pixelAriaLabel": "Piksel broj {pixel}"
   },
-    "PixelHeart": {
+  "PixelHeart": {
     "ariaLabel": "Srce sastavljeno od piksela",
     "soldAriaLabel": "Piksel {pixel}, donator {donor}",
     "availableAriaLabel": "Izaberi slobodan piksel {pixel}",

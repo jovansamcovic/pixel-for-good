@@ -81,7 +81,7 @@
     "legend": {
       "ariaLabel": "Pixel legend",
       "donated": "Donated",
-      "available": "AvailableAvailable",
+      "available": "Available",
       "selected": "Your choice"
     }
   },
@@ -187,9 +187,12 @@
     },
     "preview": {
       "ariaLabel": "Instagram Story preview",
-      "eyebrow": "My mark in the heart"
+      "eyebrow": "My mark in the heart",
+      "modalTitle": "Instagram Story preview",
+      "closeLabel": "Close Story preview"
     },
     "story": {
+      "linkStickerLabel": "Add LINK",
       "brandName": "choose a pixel",
       "hashtag": "#PIXELBYPIXEL",
       "title": {
@@ -207,6 +210,7 @@
       "fileName": "my-pixel"
     },
     "controls": {
+      "previewButton": "Preview Story",
       "eyebrow": "Your personalised Story",
       "title": "Ready for Instagram.",
       "description": "Your Story is prepared in 1080 × 1920 px format. It includes your highlighted pixel, name and message of support.",

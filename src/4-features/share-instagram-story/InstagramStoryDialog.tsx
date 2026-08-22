@@ -7,6 +7,7 @@ import type { DonationRecord } from "@/src/5-entities/donation/DonationBadge";
 import {
   HEART_COLUMNS,
   HEART_PIXELS,
+  HEART_ROWS,
   isInitiallySold,
   PIXEL_PALETTE,
   PixelHeart,
@@ -31,6 +32,7 @@ type StoryCopy = {
   footerAction: string;
   footerDomain: string;
   joinButton: string;
+  linkStickerLabel: string;
   fileName: string;
   canvasError: string;
   imageError: string;
@@ -188,6 +190,15 @@ const createInstagramStory = async (
     const heartWidth = HEART_COLUMNS * cell + (HEART_COLUMNS - 1) * gap;
     const heartX = (canvas.width - heartWidth) / 2;
     const heartY = 540;
+    const selectedHeartPixel = HEART_PIXELS.find(
+      (pixel) => pixel.id + 1 === donation.id,
+    );
+    const selectedPixelX = selectedHeartPixel
+      ? heartX + selectedHeartPixel.col * (cell + gap) + cell / 2
+      : canvas.width / 2;
+    const selectedPixelY = selectedHeartPixel
+      ? heartY + selectedHeartPixel.row * (cell + gap) + cell
+      : 1180;
 
     HEART_PIXELS.forEach((pixel) => {
       const x = heartX + pixel.col * (cell + gap);
@@ -213,33 +224,48 @@ const createInstagramStory = async (
       }
     });
 
+    const donorCardWidth = 700;
+    const donorCardHeight = 220;
+    const donorCardX = Math.min(
+      Math.max(selectedPixelX - donorCardWidth / 2, 70),
+      canvas.width - donorCardWidth - 70,
+    );
+    const donorCardY = Math.min(Math.max(selectedPixelY + 42, 900), 1340);
+
     context.fillStyle = COLORS.white;
     context.shadowColor = "rgba(13, 39, 52, 0.13)";
-    context.shadowBlur = 34;
-    context.shadowOffsetY = 14;
+    context.shadowBlur = 24;
+    context.shadowOffsetY = 10;
 
-    roundedRect(context, 76, 1280, 928, 390, 28);
+    roundedRect(
+      context,
+      donorCardX,
+      donorCardY,
+      donorCardWidth,
+      donorCardHeight,
+      24,
+    );
 
     context.shadowColor = "transparent";
     context.shadowBlur = 0;
     context.shadowOffsetY = 0;
 
     context.fillStyle = donation.color;
-    roundedRect(context, 128, 1350, 222, 222, 20);
+    roundedRect(context, donorCardX + 28, donorCardY + 30, 150, 160, 18);
 
     context.strokeStyle = COLORS.navy;
     context.lineWidth = 7;
-    context.strokeRect(141, 1363, 196, 196);
+    context.strokeRect(donorCardX + 39, donorCardY + 41, 128, 138);
 
     context.fillStyle = COLORS.white;
     context.textAlign = "center";
-    context.font = '800 44px "Sora", Arial, sans-serif';
-    context.fillText(`#${donation.id}`, 239, 1481);
+    context.font = '800 34px "Sora", Arial, sans-serif';
+    context.fillText(`#${donation.id}`, donorCardX + 103, donorCardY + 123);
 
     context.textAlign = "left";
     context.fillStyle = COLORS.red;
     context.font = '800 21px "Sora", Arial, sans-serif';
-    context.fillText(copy.pixelLabel, 404, 1368);
+    context.fillText(copy.pixelLabel, donorCardX + 210, donorCardY + 55);
 
     context.fillStyle = COLORS.navy;
     context.font = '700 48px "Fraunces", Georgia, serif';
@@ -247,10 +273,10 @@ const createInstagramStory = async (
     drawWrappedText(
       context,
       donation.name || copy.anonymousDonor,
-      404,
-      1432,
-      500,
-      55,
+      donorCardX + 210,
+      donorCardY + 112,
+      450,
+      48,
     );
 
     context.fillStyle = COLORS.muted;
@@ -258,34 +284,27 @@ const createInstagramStory = async (
 
     drawWrappedText(
       context,
-      donation.message
-        ? `„${donation.message}”`
-        : copy.defaultMessage,
-      404,
-      1542,
-      500,
-      39,
+      donation.message ? `„${donation.message}”` : copy.defaultMessage,
+      donorCardX + 210,
+      donorCardY + 166,
+      450,
+      34,
     );
 
-    context.fillStyle = COLORS.navy;
-    context.fillRect(0, 1765, 1080, 155);
-
-    context.textAlign = "left";
+    context.shadowColor = "rgba(13, 39, 52, 0.12)";
+    context.shadowBlur = 18;
+    context.shadowOffsetY = 8;
     context.fillStyle = COLORS.white;
-    context.font = '800 30px "Sora", Arial, sans-serif';
-    context.fillText(copy.footerAction, 76, 1842);
+    roundedRect(context, 260, 1580, 560, 88, 22);
 
-    context.fillStyle = "rgba(255, 255, 255, 0.55)";
-    context.font = '400 20px "Sora", Arial, sans-serif';
-    context.fillText(copy.footerDomain, 76, 1880);
-
-    context.fillStyle = COLORS.red;
-    roundedRect(context, 814, 1805, 190, 64, 12);
+    context.shadowColor = "transparent";
+    context.shadowBlur = 0;
+    context.shadowOffsetY = 0;
 
     context.textAlign = "center";
-    context.fillStyle = COLORS.white;
-    context.font = '800 22px "Sora", Arial, sans-serif';
-    context.fillText(`${copy.joinButton} →`, 909, 1846);
+    context.fillStyle = COLORS.navy;
+    context.font = '800 25px "Sora", Arial, sans-serif';
+    context.fillText(`↗  ${copy.linkStickerLabel}`, 540, 1635);
 
     canvas.toBlob(
       (blob) => {
@@ -315,6 +334,7 @@ function InstagramStoryDialogContent({
   const [storyFile, setStoryFile] = useState<File | null>(null);
   const [shareStatus, setShareStatus] = useState("");
   const [isPreparing, setIsPreparing] = useState(true);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -332,6 +352,7 @@ function InstagramStoryDialogContent({
       footerAction: t("story.footerAction"),
       footerDomain: t("story.footerDomain"),
       joinButton: t("story.joinButton"),
+      linkStickerLabel: t("story.linkStickerLabel"),
       fileName: t("story.fileName"),
       canvasError: t("errors.canvasUnsupported"),
       imageError: t("errors.imageGeneration"),
@@ -411,129 +432,170 @@ function InstagramStoryDialogContent({
     t("controls.steps.instagram"),
     t("controls.steps.publish"),
   ];
+  const selectedHeartPixel = HEART_PIXELS.find(
+    (pixel) => pixel.id + 1 === donation.id,
+  );
+  const donorCardLeft = selectedHeartPixel
+    ? Math.min(
+        Math.max(((selectedHeartPixel.col + 0.5) / HEART_COLUMNS) * 100, 28),
+        72,
+      )
+    : 50;
+  const donorCardTop = selectedHeartPixel
+    ? ((selectedHeartPixel.row + 1) / HEART_ROWS) * 100
+    : 100;
 
   return (
     <Modal
       labelledBy="story-title"
       closeLabel={t("modal.closeLabel")}
       overlayClassName="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-[#0D2734]/75 p-4 backdrop-blur-sm sm:p-6"
-      dialogClassName="relative grid w-full max-w-5xl overflow-hidden rounded-[32px] bg-[#FFF6EB] shadow-[0_30px_100px_rgba(13,39,52,0.35)] lg:grid-cols-[minmax(320px,0.8fr)_minmax(0,1.2fr)]"
+      dialogClassName="relative w-full max-w-xl overflow-hidden rounded-[32px] bg-[#FFF6EB] shadow-[0_30px_100px_rgba(13,39,52,0.35)]"
       closeButtonClassName="absolute right-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-[#0D2734]/10 bg-white text-xl text-[#0D2734] shadow-sm transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]"
       onClose={onClose}
     >
-      <div className="flex items-center justify-center bg-[#F4E8DD] p-5 sm:p-8">
+      {previewOpen && (
         <div
-          aria-label={t("preview.ariaLabel")}
-          className="relative aspect-[9/16] w-full max-w-[340px] overflow-hidden rounded-[28px] bg-[#FFF6EB] shadow-[0_24px_60px_rgba(13,39,52,0.18)]"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="story-preview-title"
+          className="fixed inset-0 z-[120] flex items-center justify-center overflow-y-auto bg-[#0D2734]/85 p-4 backdrop-blur-md sm:p-6"
         >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-30"
-            style={{
-              backgroundImage: "radial-gradient(#D6384B 1px, transparent 1px)",
-              backgroundSize: "18px 18px",
-            }}
-          />
+          <div className="relative flex w-full max-w-md items-center justify-center rounded-[32px] bg-[#F4E8DD] p-5 shadow-[0_30px_100px_rgba(13,39,52,0.45)] sm:p-8">
+            <h2 id="story-preview-title" className="sr-only">
+              {t("preview.modalTitle")}
+            </h2>
 
-          <div className="relative flex h-full flex-col p-6">
-            <header className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <span aria-hidden="true" className="grid grid-cols-3 gap-[2px]">
-                  <span className="h-2 w-2 rounded-[1px] bg-[#D6384B]" />
-                  <span className="h-2 w-2 rounded-[1px] bg-[#D6384B]" />
-                  <span className="h-2 w-2 rounded-[1px] bg-[#F5A33B]" />
+            <button
+              type="button"
+              onClick={() => setPreviewOpen(false)}
+              aria-label={t("preview.closeLabel")}
+              className="absolute right-3 top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-[#0D2734]/10 bg-white text-xl text-[#0D2734] shadow-sm transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]"
+            >
+              ×
+            </button>
 
-                  <span className="col-start-1 ml-[5px] h-2 w-2 rounded-[1px] bg-[#D6384B]" />
-                  <span className="h-2 w-2 rounded-[1px] bg-[#D6384B]" />
-
-                  <span className="col-start-2 h-2 w-2 rounded-[1px] bg-[#0D2734]" />
-                </span>
-
-                <strong className="text-xs font-extrabold text-[#0D2734]">
-                  {t("story.brandName")}
-                </strong>
-              </div>
-
-              <small className="text-[8px] font-extrabold uppercase tracking-[0.1em] text-[#D6384B]">
-                {t("story.hashtag")}
-              </small>
-            </header>
-
-            <div className="mt-7 text-center">
-              <p className="text-[9px] font-extrabold uppercase tracking-[0.12em] text-[#D6384B]">
-                {t("preview.eyebrow")}
-              </p>
-
-              <h3 className="mt-3 font-serif text-[28px] font-bold leading-[1.05] tracking-[-0.03em] text-[#0D2734]">
-                {t("story.title.first")}
-                <span className="block text-[#D6384B]">
-                  {t("story.title.highlighted")}
-                </span>
-                {t("story.title.last")}
-              </h3>
-
-              <p className="mt-3 text-[10px] text-[#6D7475]">
-                {t("story.tagline")}
-              </p>
-            </div>
-
-            <div className="mt-5 flex flex-1 items-center justify-center">
-              <PixelHeart
-                className="!max-w-[260px] gap-px"
-                highlightedPixel={donation.id}
-                purchasedPixels={{
-                  [donation.id]: donation.color,
+            <div
+              aria-label={t("preview.ariaLabel")}
+              className="relative aspect-[9/16] w-full max-w-[340px] overflow-hidden rounded-[28px] bg-[#FFF6EB] shadow-[0_24px_60px_rgba(13,39,52,0.18)]"
+            >
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 opacity-30"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(#D6384B 1px, transparent 1px)",
+                  backgroundSize: "18px 18px",
                 }}
               />
-            </div>
 
-            <div className="rounded-2xl bg-white p-4 shadow-[0_12px_30px_rgba(13,39,52,0.1)]">
-              <div className="flex items-center gap-4">
-                <div
-                  className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border-[3px] border-[#0D2734] text-sm font-extrabold text-white"
-                  style={{
-                    backgroundColor: donation.color,
-                  }}
-                >
-                  #{donation.id}
-                </div>
+              <div className="relative flex h-full flex-col p-6">
+                <header className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      aria-hidden="true"
+                      className="grid grid-cols-3 gap-[2px]"
+                    >
+                      <span className="h-2 w-2 rounded-[1px] bg-[#D6384B]" />
+                      <span className="h-2 w-2 rounded-[1px] bg-[#D6384B]" />
+                      <span className="h-2 w-2 rounded-[1px] bg-[#F5A33B]" />
 
-                <div className="min-w-0">
-                  <p className="text-[8px] font-extrabold uppercase tracking-[0.1em] text-[#D6384B]">
-                    {t("story.pixelLabel")}
+                      <span className="col-start-1 ml-[5px] h-2 w-2 rounded-[1px] bg-[#D6384B]" />
+                      <span className="h-2 w-2 rounded-[1px] bg-[#D6384B]" />
+
+                      <span className="col-start-2 h-2 w-2 rounded-[1px] bg-[#0D2734]" />
+                    </span>
+                  </div>
+                </header>
+
+                <div className="text-center">
+                  <h3 className="mt-3 font-serif text-[28px] font-bold leading-[1.05] tracking-[-0.03em] text-[#0D2734]">
+                    {t("story.title.first")}
+                    <span className="block text-[#D6384B]">
+                      {t("story.title.highlighted")}
+                    </span>
+                    {t("story.title.last")}
+                  </h3>
+
+                  <p className="mt-3 text-[10px] text-[#6D7475]">
+                    {t("story.tagline")}
                   </p>
+                </div>
 
-                  <strong className="mt-1 block truncate font-serif text-lg text-[#0D2734]">
-                    {donation.name || t("story.anonymousDonor")}
-                  </strong>
+                <div className="mt-auto flex justify-center pt-5">
+                  <div
+                    className={[
+                      "inline-flex items-center justify-center gap-1",
+                      "rounded-[16px] bg-white px-5 py-1.5",
+                      "text-[12px] font-bold uppercase tracking-[0.04em]",
+                      "text-[#287EB1]",
+                      "shadow-[0_5px_0_rgba(13,39,52,0.12),0_10px_24px_rgba(13,39,52,0.18)]",
+                    ].join(" ")}
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2.4}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                      className="h-5 w-5 shrink-0"
+                    >
+                      <path d="M10.5 13.5a4 4 0 0 0 5.66.06l2.4-2.4a4 4 0 0 0-5.66-5.66l-1.38 1.38" />
+                      <path d="M13.5 10.5a4 4 0 0 0-5.66-.06l-2.4 2.4a4 4 0 0 0 5.66 5.66l1.38-1.38" />
+                    </svg>
 
-                  {donation.message && (
-                    <p className="mt-1 line-clamp-2 text-[9px] leading-4 text-[#6D7475]">
-                      „{donation.message}”
-                    </p>
-                  )}
+                    <span>{t("story.linkStickerLabel")}</span>
+                  </div>
+                </div>
+                <div className="mt-5 flex flex-1 items-center justify-center">
+                  <div className="relative w-full max-w-[260px] overflow-visible">
+                    <PixelHeart
+                      className="!max-w-none gap-px"
+                      highlightedPixel={donation.id}
+                      purchasedPixels={{
+                        [donation.id]: donation.color,
+                      }}
+                    />
+
+                    <div
+                      className={[
+                        "absolute z-20 w-[205px]",
+                        "-translate-x-1/2",
+                        "rounded-xl bg-white p-2.5",
+                        "shadow-[0_10px_26px_rgba(13,39,52,0.16)]",
+                      ].join(" ")}
+                      style={{
+                        left: `${donorCardLeft}%`,
+                        top: `calc(${donorCardTop}% + 8px)`,
+                      }}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border-2 border-[#0D2734] text-[10px] font-extrabold text-white"
+                          style={{ backgroundColor: donation.color }}
+                        >
+                          #{donation.id}
+                        </div>
+
+                        <div className="min-w-0 text-left">
+                          <strong className="mt-0.5 block truncate font-serif text-sm text-[#0D2734]">
+                            {donation.name || t("story.anonymousDonor")}
+                          </strong>
+                          <p className="mt-0.5 line-clamp-1 text-[7px] text-[#6D7475]">
+                            „{donation.message || t("story.defaultMessage")}”
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <footer className="-mx-6 -mb-6 mt-5 flex items-center justify-between gap-3 bg-[#0D2734] px-6 py-4 text-white">
-              <div>
-                <strong className="block text-[10px]">
-                  {t("story.footerAction")}
-                </strong>
-
-                <span className="mt-1 block text-[8px] text-white/55">
-                  {t("story.footerDomain")}
-                </span>
-              </div>
-
-              <span className="rounded-lg bg-[#D6384B] px-3 py-2 text-[8px] font-extrabold uppercase tracking-wide">
-                {t("story.joinButton")} →
-              </span>
-            </footer>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="flex flex-col justify-center px-6 py-10 sm:px-10 lg:px-12">
         <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#D6384B]">
@@ -568,9 +630,30 @@ function InstagramStoryDialogContent({
 
         <button
           type="button"
+          onClick={() => setPreviewOpen(true)}
+          className="mt-9 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border-2 border-[#D6384B] bg-white px-6 text-sm font-extrabold text-[#D6384B] transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B] focus-visible:ring-offset-2"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+            <circle cx="12" cy="12" r="2.5" />
+          </svg>
+          {t("controls.previewButton")}
+        </button>
+
+        <button
+          type="button"
           onClick={shareToInstagram}
           disabled={!storyFile}
-          className="mt-9 inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl bg-[#D6384B] px-6 text-sm font-extrabold text-white shadow-[0_12px_30px_rgba(214,56,75,0.2)] transition hover:-translate-y-0.5 hover:bg-[#BF2F41] disabled:cursor-wait disabled:opacity-50"
+          className="mt-3 inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl bg-[#D6384B] px-6 text-sm font-extrabold text-white shadow-[0_12px_30px_rgba(214,56,75,0.2)] transition hover:-translate-y-0.5 hover:bg-[#BF2F41] disabled:cursor-wait disabled:opacity-50"
         >
           {isPreparing ? (
             <>
@@ -633,10 +716,5 @@ function InstagramStoryDialogContent({
 }
 
 export function InstagramStoryDialog(props: InstagramStoryDialogProps) {
-  return (
-    <InstagramStoryDialogContent
-      key={props.donation.id}
-      {...props}
-    />
-  );
+  return <InstagramStoryDialogContent key={props.donation.id} {...props} />;
 }
