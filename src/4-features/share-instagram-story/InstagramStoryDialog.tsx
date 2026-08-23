@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 
 import type { DonationRecord } from "@/src/5-entities/donation/DonationBadge";
@@ -8,11 +8,10 @@ import {
   HEART_COLUMNS,
   HEART_PIXELS,
   HEART_ROWS,
-  isInitiallySold,
-  PIXEL_PALETTE,
   PixelHeart,
 } from "@/src/5-entities/heart-pixel/PixelHeart";
 import { Modal } from "@/src/6-shared/ui/modal/Modal";
+import { getFontEmbedCSS, toBlob } from "html-to-image";
 
 type InstagramStoryDialogProps = {
   donation: DonationRecord;
@@ -20,325 +19,54 @@ type InstagramStoryDialogProps = {
 };
 
 type StoryCopy = {
-  brandName: string;
-  hashtag: string;
-  titleFirst: string;
-  titleHighlighted: string;
-  titleLast: string;
-  tagline: string;
-  pixelLabel: string;
-  anonymousDonor: string;
-  defaultMessage: string;
-  footerAction: string;
-  footerDomain: string;
-  joinButton: string;
-  linkStickerLabel: string;
   fileName: string;
-  canvasError: string;
   imageError: string;
 };
 
 const COLORS = {
   cream: "#FFF6EB",
-  white: "#FFFFFF",
-  navy: "#0D2734",
-  red: "#D6384B",
-  orange: "#F5A33B",
-  muted: "#6D7475",
-  freePixel: "#E7E0D7",
 };
 
-const roundedRect = (
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  radius: number,
-) => {
-  context.beginPath();
-  context.roundRect(x, y, width, height, radius);
-  context.fill();
-};
-
-const drawWrappedText = (
-  context: CanvasRenderingContext2D,
-  value: string,
-  x: number,
-  y: number,
-  maxWidth: number,
-  lineHeight: number,
-  maxLines = 2,
-) => {
-  const words = value.trim().split(/\s+/);
-  const lines: string[] = [];
-  let line = "";
-
-  for (const word of words) {
-    const candidate = line ? `${line} ${word}` : word;
-
-    if (context.measureText(candidate).width > maxWidth && line) {
-      lines.push(line);
-      line = word;
-
-      if (lines.length === maxLines - 1) {
-        break;
-      }
-    } else {
-      line = candidate;
-    }
-  }
-
-  if (line && lines.length < maxLines) {
-    lines.push(line);
-  }
-
-  lines.forEach((text, index) => {
-    context.fillText(text, x, y + index * lineHeight);
+const nextPaint = () =>
+  new Promise<void>((resolve) => {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => resolve());
+    });
   });
-};
-
-const drawPixelLogo = (
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-) => {
-  const size = 18;
-  const gap = 4;
-
-  const pixels = [
-    { col: 0, row: 0, color: COLORS.red },
-    { col: 1, row: 0, color: COLORS.red },
-    { col: 2, row: 0, color: COLORS.orange },
-    { col: 0.5, row: 1, color: COLORS.red },
-    { col: 1.5, row: 1, color: COLORS.red },
-    { col: 1, row: 2, color: COLORS.navy },
-  ];
-
-  pixels.forEach((pixel) => {
-    context.fillStyle = pixel.color;
-    context.fillRect(
-      x + pixel.col * (size + gap),
-      y + pixel.row * (size + gap),
-      size,
-      size,
-    );
-  });
-};
-
-const drawLinkIcon = (
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  size: number,
-) => {
-  const scale = size / 24;
-
-  context.save();
-  context.translate(x, y);
-  context.scale(scale, scale);
-  context.strokeStyle = "#287EB1";
-  context.lineWidth = 2.4;
-  context.lineCap = "round";
-  context.lineJoin = "round";
-  context.stroke(
-    new Path2D(
-      "M10.5 13.5a4 4 0 0 0 5.66.06l2.4-2.4a4 4 0 0 0-5.66-5.66l-1.38 1.38",
-    ),
-  );
-  context.stroke(
-    new Path2D(
-      "M13.5 10.5a4 4 0 0 0-5.66-.06l-2.4 2.4a4 4 0 0 0 5.66 5.66l1.38-1.38",
-    ),
-  );
-  context.restore();
-};
 
 const createInstagramStory = async (
+  previewElement: HTMLDivElement,
   donation: DonationRecord,
   copy: StoryCopy,
 ): Promise<File> => {
   await document.fonts.ready;
+  await nextPaint();
 
-  return new Promise<File>((resolve, reject) => {
-    const canvas = document.createElement("canvas");
+  const { width, height } = previewElement.getBoundingClientRect();
 
-    canvas.width = 1080;
-    canvas.height = 1920;
+  if (!width || !height) {
+    throw new Error(copy.imageError);
+  }
 
-    const context = canvas.getContext("2d");
+  const fontEmbedCSS = await getFontEmbedCSS(previewElement);
 
-    if (!context) {
-      reject(new Error(copy.canvasError));
-      return;
-    }
+  const blob = await toBlob(previewElement, {
+    width,
+    height,
+    canvasWidth: 1080,
+    canvasHeight: 1920,
+    pixelRatio: 1,
+    backgroundColor: COLORS.cream,
+    cacheBust: true,
+    fontEmbedCSS,
+  });
 
-    context.fillStyle = COLORS.cream;
-    context.fillRect(0, 0, canvas.width, canvas.height);
+  if (!blob) {
+    throw new Error(copy.imageError);
+  }
 
-    context.fillStyle = "rgba(214, 56, 75, 0.10)";
-
-    for (let x = 24; x < canvas.width; x += 38) {
-      for (let y = 24; y < canvas.height; y += 38) {
-        context.fillRect(x, y, 2, 2);
-      }
-    }
-
-    drawPixelLogo(context, 76, 72);
-
-    context.textAlign = "center";
-    context.fillStyle = COLORS.navy;
-    context.font = '700 88px "Cormorant Garamond", Georgia, serif';
-    context.fillText(copy.titleFirst, 540, 260);
-
-    context.fillStyle = COLORS.red;
-    context.fillText(copy.titleHighlighted, 540, 348);
-
-    context.fillStyle = COLORS.navy;
-    context.fillText(copy.titleLast, 540, 436);
-
-    context.fillStyle = COLORS.muted;
-    context.font = '400 28px "Geist", Arial, sans-serif';
-    context.fillText(copy.tagline, 540, 492);
-
-    context.shadowColor = "rgba(13, 39, 52, 0.14)";
-    context.shadowBlur = 24;
-    context.shadowOffsetY = 12;
-    context.fillStyle = COLORS.white;
-    roundedRect(context, 390, 560, 300, 72, 22);
-
-    context.shadowColor = "transparent";
-    context.shadowBlur = 0;
-    context.shadowOffsetY = 0;
-    context.fillStyle = "#287EB1";
-    context.font = '700 25px "Geist", Arial, sans-serif';
-    drawLinkIcon(context, 430, 579, 34);
-    context.fillText(copy.linkStickerLabel, 558, 606);
-
-    const cell = 16;
-    const gap = 4;
-    const heartWidth = HEART_COLUMNS * cell + (HEART_COLUMNS - 1) * gap;
-    const heartX = (canvas.width - heartWidth) / 2;
-    const heartY = 700;
-    const selectedHeartPixel = HEART_PIXELS.find(
-      (pixel) => pixel.id + 1 === donation.id,
-    );
-    const selectedPixelY = selectedHeartPixel
-      ? heartY + selectedHeartPixel.row * (cell + gap) + cell
-      : heartY + heartWidth;
-
-    HEART_PIXELS.forEach((pixel) => {
-      const x = heartX + pixel.col * (cell + gap);
-      const y = heartY + pixel.row * (cell + gap);
-      const isMine = pixel.id + 1 === donation.id;
-
-      context.fillStyle = isMine
-        ? donation.color
-        : isInitiallySold(pixel.id)
-          ? PIXEL_PALETTE[pixel.id % PIXEL_PALETTE.length]
-          : COLORS.freePixel;
-
-      context.fillRect(x, y, cell, cell);
-
-      if (isMine) {
-        context.strokeStyle = COLORS.navy;
-        context.lineWidth = 7;
-        context.strokeRect(x - 6, y - 6, cell + 12, cell + 12);
-
-        context.strokeStyle = COLORS.orange;
-        context.lineWidth = 3;
-        context.strokeRect(x - 13, y - 13, cell + 26, cell + 26);
-      }
-    });
-
-    const donorCardWidth = 650;
-    const donorCardHeight = 205;
-    const donorCardLeftPercent = selectedHeartPixel
-      ? Math.min(
-          Math.max(
-            ((selectedHeartPixel.col + 0.5) / HEART_COLUMNS) * 100,
-            28,
-          ),
-          72,
-        )
-      : 50;
-    const donorCardX =
-      heartX +
-      (donorCardLeftPercent / 100) * heartWidth -
-      donorCardWidth / 2;
-    const donorCardY = selectedPixelY + 25;
-
-    context.fillStyle = COLORS.white;
-    context.shadowColor = "rgba(13, 39, 52, 0.13)";
-    context.shadowBlur = 24;
-    context.shadowOffsetY = 10;
-
-    roundedRect(
-      context,
-      donorCardX,
-      donorCardY,
-      donorCardWidth,
-      donorCardHeight,
-      24,
-    );
-
-    context.shadowColor = "transparent";
-    context.shadowBlur = 0;
-    context.shadowOffsetY = 0;
-
-    context.fillStyle = donation.color;
-    roundedRect(context, donorCardX + 28, donorCardY + 28, 140, 149, 18);
-
-    context.strokeStyle = COLORS.navy;
-    context.lineWidth = 7;
-    context.strokeRect(donorCardX + 38, donorCardY + 38, 120, 129);
-
-    context.fillStyle = COLORS.white;
-    context.textAlign = "center";
-    context.font = '800 34px "Geist", Arial, sans-serif';
-    context.fillText(`#${donation.id}`, donorCardX + 98, donorCardY + 116);
-
-    context.textAlign = "left";
-    context.fillStyle = COLORS.navy;
-    context.font = '700 48px "Cormorant Garamond", Georgia, serif';
-
-    drawWrappedText(
-      context,
-      donation.name || copy.anonymousDonor,
-      donorCardX + 195,
-      donorCardY + 88,
-      415,
-      48,
-    );
-
-    context.fillStyle = COLORS.muted;
-    context.font = '400 24px "Geist", Arial, sans-serif';
-
-    drawWrappedText(
-      context,
-      donation.message ? `„${donation.message}”` : copy.defaultMessage,
-      donorCardX + 195,
-      donorCardY + 142,
-      415,
-      31,
-    );
-
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) {
-          reject(new Error(copy.imageError));
-          return;
-        }
-
-        resolve(
-          new File([blob], `${copy.fileName}-${donation.id}.png`, {
-            type: "image/png",
-          }),
-        );
-      },
-      "image/png",
-      1,
-    );
+  return new File([blob], `${copy.fileName}-${donation.id}.png`, {
+    type: "image/png",
   });
 };
 
@@ -352,30 +80,23 @@ function InstagramStoryDialogContent({
   const [shareStatus, setShareStatus] = useState("");
   const [isPreparing, setIsPreparing] = useState(true);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const storyPreviewRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     const copy: StoryCopy = {
-      brandName: t("story.brandName"),
-      hashtag: t("story.hashtag"),
-      titleFirst: t("story.title.first"),
-      titleHighlighted: t("story.title.highlighted"),
-      titleLast: t("story.title.last"),
-      tagline: t("story.tagline"),
-      pixelLabel: t("story.pixelLabel"),
-      anonymousDonor: t("story.anonymousDonor"),
-      defaultMessage: t("story.defaultMessage"),
-      footerAction: t("story.footerAction"),
-      footerDomain: t("story.footerDomain"),
-      joinButton: t("story.joinButton"),
-      linkStickerLabel: t("story.linkStickerLabel"),
       fileName: t("story.fileName"),
-      canvasError: t("errors.canvasUnsupported"),
       imageError: t("errors.imageGeneration"),
     };
 
-    createInstagramStory(donation, copy)
+    const previewElement = storyPreviewRef.current;
+
+    if (!previewElement) {
+      return;
+    }
+
+    createInstagramStory(previewElement, donation, copy)
       .then((file) => {
         if (!cancelled) {
           setStoryFile(file);
@@ -471,13 +192,17 @@ function InstagramStoryDialogContent({
       closeButtonClassName="absolute right-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-[#0D2734]/10 bg-white text-xl text-[#0D2734] shadow-sm transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]"
       onClose={onClose}
     >
-      {previewOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="story-preview-title"
-          className="fixed inset-0 z-[120] flex items-center justify-center overflow-y-auto bg-[#0D2734]/85 p-4 backdrop-blur-md sm:p-6"
-        >
+      <div
+        role={previewOpen ? "dialog" : undefined}
+        aria-modal={previewOpen ? true : undefined}
+        aria-labelledby={previewOpen ? "story-preview-title" : undefined}
+        aria-hidden={!previewOpen}
+        className={
+          previewOpen
+            ? "fixed inset-0 z-[120] flex items-center justify-center overflow-y-auto bg-[#0D2734]/85 p-4 backdrop-blur-md sm:p-6"
+            : "pointer-events-none fixed -left-[2000px] top-0 z-[-1] flex h-[720px] w-[500px] items-center justify-center"
+        }
+      >
           <div className="relative flex w-full max-w-md items-center justify-center rounded-[32px] bg-[#F4E8DD] p-5 shadow-[0_30px_100px_rgba(13,39,52,0.45)] sm:p-8">
             <h2 id="story-preview-title" className="sr-only">
               {t("preview.modalTitle")}
@@ -487,12 +212,16 @@ function InstagramStoryDialogContent({
               type="button"
               onClick={() => setPreviewOpen(false)}
               aria-label={t("preview.closeLabel")}
-              className="absolute right-3 top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-[#0D2734]/10 bg-white text-xl text-[#0D2734] shadow-sm transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]"
+              className={[
+                "absolute right-3 top-3 z-20 h-10 w-10 items-center justify-center rounded-full border border-[#0D2734]/10 bg-white text-xl text-[#0D2734] shadow-sm transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]",
+                previewOpen ? "flex" : "hidden",
+              ].join(" ")}
             >
               ×
             </button>
 
             <div
+              ref={storyPreviewRef}
               aria-label={t("preview.ariaLabel")}
               className="relative aspect-[9/16] w-full max-w-[340px] overflow-hidden rounded-[28px] bg-[#FFF6EB] shadow-[0_24px_60px_rgba(13,39,52,0.18)]"
             >
@@ -533,13 +262,9 @@ function InstagramStoryDialogContent({
                     </span>
                     {t("story.title.last")}
                   </h3>
-
-                  <p className="mt-3 text-[10px] text-[#6D7475]">
-                    {t("story.tagline")}
-                  </p>
                 </div>
 
-                <div className="mt-auto flex justify-center pt-5">
+                <div className="mt-auto flex justify-center pt-6">
                   <div
                     className={[
                       "inline-flex items-center justify-center gap-1",
@@ -612,7 +337,6 @@ function InstagramStoryDialogContent({
             </div>
           </div>
         </div>
-      )}
 
       <div className="flex flex-col justify-center px-6 py-10 sm:px-10 lg:px-12">
         <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#D6384B]">
@@ -645,7 +369,7 @@ function InstagramStoryDialogContent({
           ))}
         </ol>
 
-        <button
+        {storyFile && <button
           type="button"
           onClick={() => setPreviewOpen(true)}
           className="mt-9 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border-2 border-[#D6384B] bg-white px-6 text-sm font-extrabold text-[#D6384B] transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B] focus-visible:ring-offset-2"
@@ -664,13 +388,13 @@ function InstagramStoryDialogContent({
             <circle cx="12" cy="12" r="2.5" />
           </svg>
           {t("controls.previewButton")}
-        </button>
+        </button>}
 
         <button
           type="button"
           onClick={shareToInstagram}
           disabled={!storyFile}
-          className="mt-3 inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl bg-[#D6384B] px-6 text-sm font-extrabold text-white shadow-[0_12px_30px_rgba(214,56,75,0.2)] transition hover:-translate-y-0.5 hover:bg-[#BF2F41] disabled:cursor-wait disabled:opacity-50"
+          className={`${storyFile ? 'mt-3' : 'mt-9'} inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl bg-[#D6384B] px-6 text-sm font-extrabold text-white shadow-[0_12px_30px_rgba(214,56,75,0.2)] transition hover:-translate-y-0.5 hover:bg-[#BF2F41] disabled:cursor-wait disabled:opacity-50`}
         >
           {isPreparing ? (
             <>
