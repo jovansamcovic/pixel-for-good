@@ -35,7 +35,7 @@ const fieldLabelClass =
 
 const fieldClass = [
   "w-full rounded-xl border border-[#D8D4CE] bg-[#FFFCF8]",
-  "px-4 text-sm text-[#0D2734] outline-none transition",
+  "px-4 text-base text-[#0D2734] outline-none transition",
   "placeholder:text-[#9DA4A5]",
   "hover:border-[#0D2734]/40",
   "focus:border-[#0D2734] focus:ring-2 focus:ring-[#F5A33B]/35",

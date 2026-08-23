@@ -419,16 +419,6 @@ function InstagramStoryDialogContent({
           )}
         </button>
 
-        {/* <button
-          type="button"
-          onClick={downloadStory}
-          disabled={!storyFile}
-          className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border-2 border-[#0D2734] px-6 text-sm font-extrabold text-[#0D2734] transition hover:bg-[#0D2734] hover:text-white disabled:cursor-wait disabled:opacity-40"
-        >
-          {t("controls.downloadButton")}
-          <span aria-hidden="true">↓</span>
-        </button> */}
-
         {shareStatus && (
           <p
             role="status"
