@@ -189,7 +189,7 @@ function InstagramStoryDialogContent({
       closeLabel={t("modal.closeLabel")}
       overlayClassName="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-[#0D2734]/75 p-4 backdrop-blur-sm sm:p-6"
       dialogClassName="relative w-full max-w-xl overflow-hidden rounded-[32px] bg-[#FFF6EB] shadow-[0_30px_100px_rgba(13,39,52,0.35)]"
-      closeButtonClassName="absolute right-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-[#0D2734]/10 bg-white text-xl text-[#0D2734] shadow-sm transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]"
+      closeButtonClassName="absolute right-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-[#0D2734]/10 bg-white text-xl text-[#0D2734] shadow-sm transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none"
       onClose={onClose}
     >
       <div
@@ -213,7 +213,7 @@ function InstagramStoryDialogContent({
               onClick={() => setPreviewOpen(false)}
               aria-label={t("preview.closeLabel")}
               className={[
-                "absolute right-3 top-3 z-20 h-10 w-10 items-center justify-center rounded-full border border-[#0D2734]/10 bg-white text-xl text-[#0D2734] shadow-sm transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]",
+                "absolute right-3 top-3 z-20 h-10 w-10 items-center justify-center rounded-full border border-[#0D2734]/10 bg-white text-xl text-[#0D2734] shadow-sm transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none",
                 previewOpen ? "flex" : "hidden",
               ].join(" ")}
             >
@@ -271,7 +271,6 @@ function InstagramStoryDialogContent({
                       "rounded-[16px] bg-white px-5 py-1.5",
                       "text-[12px] font-bold uppercase tracking-[0.04em]",
                       "text-[#287EB1]",
-                      "shadow-[0_5px_0_rgba(13,39,52,0.12),0_10px_24px_rgba(13,39,52,0.18)]",
                     ].join(" ")}
                   >
                     <svg
@@ -306,7 +305,6 @@ function InstagramStoryDialogContent({
                         "absolute z-20 w-[205px]",
                         "-translate-x-1/2",
                         "rounded-xl bg-white p-2.5",
-                        "shadow-[0_10px_26px_rgba(13,39,52,0.16)]",
                       ].join(" ")}
                       style={{
                         left: `${donorCardLeft}%`,
@@ -372,7 +370,7 @@ function InstagramStoryDialogContent({
         {storyFile && <button
           type="button"
           onClick={() => setPreviewOpen(true)}
-          className="mt-9 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border-2 border-[#D6384B] bg-white px-6 text-sm font-extrabold text-[#D6384B] transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B] focus-visible:ring-offset-2"
+          className="mt-9 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border-2 border-[#D6384B] bg-white px-6 text-sm font-extrabold text-[#D6384B] transition hover:bg-[#D6384B] hover:text-white focus-visible:outline-none"
         >
           <svg
             viewBox="0 0 24 24"

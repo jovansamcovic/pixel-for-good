@@ -33,28 +33,14 @@ export const HEART_PIXELS: HeartPixel[] = (() => {
   const pixels: HeartPixel[] = [];
   let id = 0;
 
-  for (
-    let row = 0;
-    row < HEART_ROWS;
-    row += 1
-  ) {
-    for (
-      let col = 0;
-      col < HEART_COLUMNS;
-      col += 1
-    ) {
-      const x =
-        (col / (HEART_COLUMNS - 1)) * 2.5 -
-        1.25;
+  for (let row = 0; row < HEART_ROWS; row += 1) {
+    for (let col = 0; col < HEART_COLUMNS; col += 1) {
+      const x = (col / (HEART_COLUMNS - 1)) * 2.5 - 1.25;
 
-      const y =
-        1.2 -
-        (row / (HEART_ROWS - 1)) * 2.4;
+      const y = 1.2 - (row / (HEART_ROWS - 1)) * 2.4;
 
       const inside =
-        Math.pow(x * x + y * y - 1, 3) -
-          x * x * Math.pow(y, 3) <=
-        0;
+        Math.pow(x * x + y * y - 1, 3) - x * x * Math.pow(y, 3) <= 0;
 
       if (inside) {
         pixels.push({
@@ -70,8 +56,7 @@ export const HEART_PIXELS: HeartPixel[] = (() => {
 })();
 
 export const isInitiallySold = (id: number) =>
-  ((id * 37 + 13) % 1_000) <
-  STARTING_SOLD;
+  (id * 37 + 13) % 1_000 < STARTING_SOLD;
 
 type PixelHeartProps = {
   highlightedPixel?: number;
@@ -122,30 +107,22 @@ export function PixelHeart({
       {HEART_PIXELS.map((pixel) => {
         const pixelNumber = pixel.id + 1;
 
-        const purchasedColor =
-          purchasedPixels[pixelNumber];
+        const purchasedColor = purchasedPixels[pixelNumber];
 
-        const sold =
-          isInitiallySold(pixel.id) ||
-          Boolean(purchasedColor);
+        const sold = isInitiallySold(pixel.id) || Boolean(purchasedColor);
 
-        const selected =
-          selectedPixel === pixelNumber;
+        const selected = selectedPixel === pixelNumber;
 
-        const highlighted =
-          highlightedPixel === pixelNumber;
+        const highlighted = highlightedPixel === pixelNumber;
 
         const color =
-          purchasedColor ??
-          PIXEL_PALETTE[
-            pixel.id % PIXEL_PALETTE.length
-          ];
+          purchasedColor ?? PIXEL_PALETTE[pixel.id % PIXEL_PALETTE.length];
 
         const pixelStyle: PixelStyle = {
           "--pixel-column": pixel.col + 1,
           "--pixel-row": pixel.row + 1,
           "--pixel-color": highlighted
-            ? purchasedColor ?? color
+            ? (purchasedColor ?? color)
             : sold
               ? color
               : "#fbf8f3",
@@ -167,17 +144,19 @@ export function PixelHeart({
                 positionClasses,
                 "aspect-square min-h-0 min-w-0 rounded-[1px]",
                 highlighted
-                  ? "z-10 ring-2 ring-[#0D2734] ring-offset-1"
+                  ? [
+                      "relative z-20",
+                      "after:pointer-events-none after:absolute",
+                      "after:-inset-[4px] after:content-['']",
+                      "after:border-4 after:border-black",
+                    ].join(" ")
                   : "",
               ].join(" ")}
             />
           );
         }
 
-        const donor =
-          donorNames[
-            pixel.id % donorNames.length
-          ];
+        const donor = donorNames[pixel.id % donorNames.length];
 
         return (
           <button
