@@ -337,20 +337,12 @@ function InstagramStoryDialogContent({
         </div>
 
       <div className="flex flex-col justify-center px-6 py-10 sm:px-10 lg:px-12">
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#D6384B]">
-          {t("controls.eyebrow")}
-        </p>
-
         <h2
           id="story-title"
           className="mt-4 text-4xl font-extrabold leading-tight tracking-[-0.04em] text-[#0D2734]"
         >
           {t("controls.title")}
         </h2>
-
-        <p className="mt-4 max-w-lg text-sm leading-7 text-[#6D7475]">
-          {t("controls.description")}
-        </p>
 
         <ol className="mt-8 space-y-4">
           {steps.map((step, index) => (
@@ -427,7 +419,7 @@ function InstagramStoryDialogContent({
           )}
         </button>
 
-        <button
+        {/* <button
           type="button"
           onClick={downloadStory}
           disabled={!storyFile}
@@ -435,11 +427,7 @@ function InstagramStoryDialogContent({
         >
           {t("controls.downloadButton")}
           <span aria-hidden="true">↓</span>
-        </button>
-
-        <p className="mt-4 text-center text-xs leading-5 text-[#6D7475]">
-          {t("controls.helper")}
-        </p>
+        </button> */}
 
         {shareStatus && (
           <p
