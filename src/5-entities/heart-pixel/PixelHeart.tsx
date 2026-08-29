@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+
 import { useTranslations } from "next-intl";
 
 export type HeartPixel = {
@@ -7,17 +8,18 @@ export type HeartPixel = {
   col: number;
 };
 
-export const HEART_COLUMNS = 42;
-export const HEART_ROWS = 41;
+export const HEART_COLUMNS = 43;
+export const HEART_ROWS = 40;
+
 export const PIXEL_PRICE = 1_000;
 export const STARTING_SOLD = 684;
 
 export const PIXEL_PALETTE = [
-  "#ef5b57",
-  "#f17872",
-  "#dc454d",
-  "#f59b83",
-  "#b72e43",
+  "#EB575B",
+  "#F06A6D",
+  "#E95358",
+  "#F17D7B",
+  "#D94750",
 ];
 
 export const DONOR_NAMES = [
@@ -31,16 +33,34 @@ export const DONOR_NAMES = [
 
 export const HEART_PIXELS: HeartPixel[] = (() => {
   const pixels: HeartPixel[] = [];
+
   let id = 0;
 
-  for (let row = 0; row < HEART_ROWS; row += 1) {
-    for (let col = 0; col < HEART_COLUMNS; col += 1) {
-      const x = (col / (HEART_COLUMNS - 1)) * 2.5 - 1.25;
+  for (
+    let row = 0;
+    row < HEART_ROWS;
+    row += 1
+  ) {
+    for (
+      let col = 0;
+      col < HEART_COLUMNS;
+      col += 1
+    ) {
+      const x =
+        (col / (HEART_COLUMNS - 1)) * 2.5 -
+        1.25;
 
-      const y = 1.2 - (row / (HEART_ROWS - 1)) * 2.4;
+      const y =
+        1.2 -
+        (row / (HEART_ROWS - 1)) * 2.464;
 
       const inside =
-        Math.pow(x * x + y * y - 1, 3) - x * x * Math.pow(y, 3) <= 0;
+        Math.pow(
+          x * x + y * y - 1,
+          3,
+        ) -
+          x * x * Math.pow(y, 3) <=
+        0;
 
       if (inside) {
         pixels.push({
@@ -55,15 +75,28 @@ export const HEART_PIXELS: HeartPixel[] = (() => {
   return pixels;
 })();
 
-export const isInitiallySold = (id: number) =>
-  (id * 37 + 13) % 1_000 < STARTING_SOLD;
+export const HEART_RENDER_ROWS =
+  Math.max(
+    ...HEART_PIXELS.map((pixel) => pixel.row),
+  ) + 1;
+
+export const isInitiallySold = (
+  id: number,
+) =>
+  (id * 37 + 13) % 1_000 <
+  STARTING_SOLD;
 
 type PixelHeartProps = {
   highlightedPixel?: number;
-  purchasedPixels?: Record<number, string>;
+  purchasedPixels?: Record<
+    number,
+    string
+  >;
   selectedPixel?: number | null;
   interactive?: boolean;
-  onSelect?: (pixelId: number) => void;
+  onSelect?: (
+    pixelId: number,
+  ) => void;
   className?: string;
 };
 
@@ -81,7 +114,8 @@ export function PixelHeart({
   onSelect,
   className = "",
 }: PixelHeartProps) {
-  const t = useTranslations("PixelHeart");
+  const t =
+    useTranslations("PixelHeart");
 
   const donorNames = [
     t("donors.mina"),
@@ -94,44 +128,74 @@ export function PixelHeart({
 
   return (
     <div
-      role={interactive ? "group" : "img"}
+      role={
+        interactive
+          ? "group"
+          : "img"
+      }
       aria-label={t("ariaLabel")}
       className={[
-        "grid aspect-[42/41] w-full max-w-[560px]",
-        "grid-cols-[repeat(42,minmax(0,1fr))]",
-        "grid-rows-[repeat(41,minmax(0,1fr))]",
-        "gap-[1px] sm:gap-[2px]",
+        "grid",
+        "w-full",
+        "max-w-[560px]",
+        "gap-[2px] sm:gap-[3px]",
         className,
       ].join(" ")}
+      style={{
+        aspectRatio: `${HEART_COLUMNS} / ${HEART_RENDER_ROWS}`,
+        gridTemplateColumns: `repeat(${HEART_COLUMNS}, minmax(0, 1fr))`,
+        gridTemplateRows: `repeat(${HEART_RENDER_ROWS}, minmax(0, 1fr))`,
+      }}
     >
       {HEART_PIXELS.map((pixel) => {
-        const pixelNumber = pixel.id + 1;
+        const pixelNumber =
+          pixel.id + 1;
 
-        const purchasedColor = purchasedPixels[pixelNumber];
+        const purchasedColor =
+          purchasedPixels[
+            pixelNumber
+          ];
 
-        const sold = isInitiallySold(pixel.id) || Boolean(purchasedColor);
+        const sold =
+          isInitiallySold(
+            pixel.id,
+          ) ||
+          Boolean(
+            purchasedColor,
+          );
 
-        const selected = selectedPixel === pixelNumber;
+        const selected =
+          selectedPixel ===
+          pixelNumber;
 
-        const highlighted = highlightedPixel === pixelNumber;
+        const highlighted =
+          highlightedPixel ===
+          pixelNumber;
 
-        const color =
-          purchasedColor ?? PIXEL_PALETTE[pixel.id % PIXEL_PALETTE.length];
+        const soldColor =
+          purchasedColor ??
+          PIXEL_PALETTE[
+            pixel.id %
+              PIXEL_PALETTE.length
+          ];
+
+        const pixelColor =
+          sold
+            ? soldColor
+            : "#FBE7E3";
 
         const pixelStyle: PixelStyle = {
-          "--pixel-column": pixel.col + 1,
-          "--pixel-row": pixel.row + 1,
-          "--pixel-color": highlighted
-            ? (purchasedColor ?? color)
-            : sold
-              ? color
-              : "#fbf8f3",
+          "--pixel-column":
+            pixel.col + 1,
+          "--pixel-row":
+            pixel.row + 1,
+          "--pixel-color":
+            pixelColor,
         };
 
         const positionClasses = [
           "[grid-column:var(--pixel-column)]",
           "[grid-row:var(--pixel-row)]",
-          "bg-[var(--pixel-color)]",
         ].join(" ");
 
         if (!interactive) {
@@ -142,13 +206,18 @@ export function PixelHeart({
               aria-hidden="true"
               className={[
                 positionClasses,
-                "aspect-square min-h-0 min-w-0 rounded-[1px]",
+                "relative",
+                "aspect-square",
+                "min-h-0",
+                "min-w-0",
+                "rounded-[2px]",
+                "bg-[var(--pixel-color)]",
                 highlighted
                   ? [
-                      "relative z-20",
-                      "after:pointer-events-none after:absolute",
-                      "after:-inset-[4px] after:content-['']",
-                      "after:border-4 after:border-black",
+                      "z-20",
+                      "!bg-[#FFD665]",
+                      "ring-[2px]",
+                      "ring-[#102F3B]",
                     ].join(" ")
                   : "",
               ].join(" ")}
@@ -156,7 +225,11 @@ export function PixelHeart({
           );
         }
 
-        const donor = donorNames[pixel.id % donorNames.length];
+        const donor =
+          donorNames[
+            pixel.id %
+              donorNames.length
+          ];
 
         return (
           <button
@@ -164,53 +237,86 @@ export function PixelHeart({
             type="button"
             style={pixelStyle}
             disabled={sold}
-            aria-pressed={selected}
+            aria-pressed={
+              selected
+            }
             aria-label={
               sold
-                ? t("soldAriaLabel", {
-                    pixel: pixelNumber,
-                    donor,
-                  })
-                : t("availableAriaLabel", {
-                    pixel: pixelNumber,
-                  })
+                ? t(
+                    "soldAriaLabel",
+                    {
+                      pixel:
+                        pixelNumber,
+                      donor,
+                    },
+                  )
+                : t(
+                    "availableAriaLabel",
+                    {
+                      pixel:
+                        pixelNumber,
+                    },
+                  )
             }
             title={
               sold
-                ? t("soldTitle", {
-                    donor,
-                  })
-                : t("availableTitle", {
-                    pixel: pixelNumber,
-                  })
+                ? t(
+                    "soldTitle",
+                    {
+                      donor,
+                    },
+                  )
+                : t(
+                    "availableTitle",
+                    {
+                      pixel:
+                        pixelNumber,
+                    },
+                  )
             }
             onClick={() => {
               if (!sold) {
-                onSelect?.(pixelNumber);
+                onSelect?.(
+                  pixelNumber,
+                );
               }
             }}
             className={[
               positionClasses,
-              "aspect-square min-h-0 min-w-0 appearance-none rounded-[1px]",
-              "border p-0 outline-none transition-colors duration-150",
+              "relative",
+              "aspect-square",
+              "min-h-0",
+              "min-w-0",
+              "appearance-none",
+              "rounded-[2px]",
+              "p-0",
+              "outline-none",
+              "transition-[background-color,border-color,transform]",
+              "duration-150",
               sold
-                ? "cursor-not-allowed border-white/60"
+                ? [
+                    "cursor-default",
+                    "border-0",
+                    "bg-[var(--pixel-color)]",
+                  ].join(" ")
                 : [
-                    "cursor-pointer border-[#D8D4CE]",
-                    "hover:z-10 hover:border-[#0D2734]",
-                    "hover:bg-[#FDE6B9]",
+                    "cursor-pointer",
+                    "border",
+                    "border-[#F4B7B2]",
+                    "bg-[#FBE7E3]",
+                    "hover:z-10",
+                    "hover:border-[#E95A5E]",
+                    "hover:bg-[#F8D2CD]",
                     "focus-visible:z-10",
-                    "focus-visible:border-[#0D2734]",
-                    "focus-visible:ring-2",
-                    "focus-visible:ring-[#F5A33B]",
+                    "focus-visible:outline-none",
                   ].join(" "),
               selected
                 ? [
-                    "z-20",
-                    "!border-[#0D2734]",
-                    "!bg-[#F5A33B]",
-                    "ring-2 ring-[#0D2734]",
-                    "ring-offset-1 ring-offset-white",
+                    "z-30",
+                    "!border-[2px]",
+                    "!border-[#102F3B]",
+                    "!bg-[#FFD665]",
+                    "scale-[1.08]",
                   ].join(" ")
                 : "",
             ].join(" ")}

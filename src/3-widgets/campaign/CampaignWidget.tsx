@@ -1,22 +1,47 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import {
+  type FormEvent,
+  useEffect,
+  useState,
+} from "react";
 
 import {
-  DonationForm,
+  useLocale,
+  useTranslations,
+} from "next-intl";
+
+import {
+  DonationDialog,
+  DonationFormContent,
+  DonationSuccess,
   type DonationDraft,
-} from "@/src/4-features/make-donation/DonationForm";
+} from "@/src/4-features/donation-form";
+
 import { PixelSelector } from "@/src/4-features/select-pixel/PixelSelector";
+
 import { InstagramStoryDialog } from "@/src/4-features/share-instagram-story/InstagramStoryDialog";
+
 import type { DonationRecord } from "@/src/5-entities/donation/DonationBadge";
+
 import {
   HEART_PIXELS,
+  PIXEL_PALETTE,
+  PIXEL_PRICE,
   STARTING_SOLD,
+  isInitiallySold,
 } from "@/src/5-entities/heart-pixel/PixelHeart";
 
-export function CampaignWidget() {
+type CampaignWidgetProps = {
+  isMobile: boolean;
+};
+
+export function CampaignWidget({
+  isMobile,
+}: CampaignWidgetProps) {
   const t = useTranslations("CampaignWidget");
+  const donationT = useTranslations("DonationForm");
+  const locale = useLocale();
 
   const [selectedPixel, setSelectedPixel] = useState<
     number | null
@@ -35,29 +60,85 @@ export function CampaignWidget() {
 
   const [storyOpen, setStoryOpen] = useState(false);
 
-  const donationRef = useRef<HTMLElement | null>(null);
+  const [donorName, setDonorName] = useState("");
+  const [message, setMessage] = useState("");
+  const [showMessage, setShowMessage] =
+    useState(false);
+
+  const [selectedColor, setSelectedColor] =
+    useState(PIXEL_PALETTE[0]);
+
+  useEffect(() => {
+    if (selectedPixel === null) {
+      return;
+    }
+
+    setSelectedColor(
+      PIXEL_PALETTE[
+        selectedPixel % PIXEL_PALETTE.length
+      ],
+    );
+  }, [selectedPixel]);
 
   const soldCount =
-    STARTING_SOLD + Object.keys(purchasedPixels).length;
+    STARTING_SOLD +
+    Object.keys(purchasedPixels).length;
 
   const availablePixels = Math.max(
     HEART_PIXELS.length - soldCount,
     0,
   );
 
+  const progress = Math.min(
+    (soldCount / HEART_PIXELS.length) * 100,
+    100,
+  );
+
+  const formattedPrice = new Intl.NumberFormat(
+    locale === "sr" ? "sr-RS" : "en-US",
+    {
+      style: "currency",
+      currency: "RSD",
+      maximumFractionDigits: 0,
+    },
+  ).format(PIXEL_PRICE);
+
+  const isDonationDialogOpen =
+    selectedPixel !== null ||
+    successPixel !== null;
+
   const choosePixel = (pixelId: number) => {
     setSelectedPixel(pixelId);
     setSuccessPixel(null);
-
-    window.setTimeout(() => {
-      donationRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }, 80);
   };
 
-  const completeDonation = (draft: DonationDraft) => {
+  const chooseRandomPixel = () => {
+    const available = HEART_PIXELS.filter((pixel) => {
+      const pixelNumber = pixel.id + 1;
+
+      return (
+        !isInitiallySold(pixel.id) &&
+        purchasedPixels[pixelNumber] === undefined
+      );
+    });
+
+    if (available.length === 0) {
+      return;
+    }
+
+    const randomPixel =
+      available[
+        Math.floor(
+          Math.random() * available.length,
+        )
+      ];
+
+    choosePixel(randomPixel.id + 1);
+  };
+
+  const completeDonation = (
+    draft: DonationDraft,
+  ) => {
     if (selectedPixel === null) {
       return;
     }
@@ -76,99 +157,175 @@ export function CampaignWidget() {
     setSelectedPixel(null);
   };
 
+  const submitDonation = (
+    event: FormEvent<HTMLFormElement>,
+  ) => {
+    event.preventDefault();
+
+    if (selectedPixel === null) {
+      return;
+    }
+
+    completeDonation({
+      color: selectedColor,
+      name:
+        donorName.trim() ||
+        donationT("defaults.anonymousDonor"),
+      message:
+        message.trim() ||
+        donationT("defaults.message"),
+    });
+  };
+
+  const closeDonation = () => {
+    setSelectedPixel(null);
+  };
+
   const resetDonation = () => {
+    setSelectedPixel(null);
     setSuccessPixel(null);
+
+    setDonorName("");
+    setMessage("");
+    setShowMessage(false);
+    setSelectedColor(PIXEL_PALETTE[0]);
+
     setStoryOpen(false);
+  };
+
+  const handleDonationClose = () => {
+    if (successPixel !== null) {
+      resetDonation();
+      return;
+    }
+
+    closeDonation();
+  };
+
+  const hideMessage = () => {
+    setMessage("");
+    setShowMessage(false);
   };
 
   return (
     <section
       id="srce"
-      className="scroll-mt-28 bg-[#FFF6EB] px-5 py-16 sm:px-8 sm:py-20 lg:px-12"
+      className="scroll-mt-28 bg-[#FFF9F4] px-5 py-14 sm:px-8 sm:py-20"
     >
-      <div className="mx-auto max-w-[1280px]">
-        <header>
+      <div className="mx-auto max-w-[900px]">
+        <header className="text-center">
           <p className="text-xs font-extrabold uppercase tracking-[0.08em] text-[#D6384B]">
             {t("eyebrow")}
           </p>
 
-          <h2 className="mt-4 text-4xl font-extrabold leading-tight tracking-[-0.04em] text-[#0D2734] sm:text-5xl">
+          <h2 className="mt-3 text-4xl font-extrabold leading-tight tracking-[-0.045em] text-[#0D2734] sm:text-5xl">
             {t("title")}
           </h2>
 
-          <p className="mt-2 text-base leading-7 text-[#6D7475]">
+          <p className="mx-auto mt-3 max-w-xl text-base leading-7 text-[#6D7475]">
             {t("description")}
           </p>
         </header>
 
-        <div className="mt-8 grid items-stretch gap-8 lg:grid-cols-[minmax(0,1.7fr)_minmax(340px,1fr)]">
-          <div className="flex min-h-[620px] min-w-0 flex-col rounded-[28px] border border-[#E8D8CC] bg-white p-5 sm:p-7">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div
-                aria-label={t("legend.ariaLabel")}
-                className="flex flex-wrap items-center gap-x-5 gap-y-3"
-              >
-                <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6D7475]">
-                  <span
-                    aria-hidden="true"
-                    className="h-3 w-3 rounded-[2px] bg-[#F06B68]"
-                  />
+        <div className="mt-7 rounded-[32px] border border-[#E8D8CC] bg-white p-4 shadow-[0_20px_60px_rgba(13,39,52,0.06)] sm:p-7">
+          <div className="mb-5">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#D6384B]">
+                  Zajedno punimo srce
+                </p>
 
-                  {t("legend.donated")}
-                </span>
-
-                <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6D7475]">
-                  <span
-                    aria-hidden="true"
-                    className="h-3 w-3 rounded-[2px] border border-[#C9D0D1] bg-[#FFF6EB]"
-                  />
-
-                  {t("legend.available")}
-                </span>
-
-                <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6D7475]">
-                  <span
-                    aria-hidden="true"
-                    className="h-4 w-4 rounded-[2px] border-2 border-[#0D2734] bg-[#F5A33B]"
-                  />
-
-                  {t("legend.selected")}
-                </span>
+                <p className="mt-1 text-sm font-bold text-[#0D2734]">
+                  {soldCount.toLocaleString("sr-RS")}{" "}
+                  piksela već čini srce
+                </p>
               </div>
 
-              <span className="shrink-0 text-xs font-extrabold uppercase tracking-[0.03em] text-[#D6384B]">
-                {t("availablePixels", {
-                  count: availablePixels,
-                })}
-              </span>
+              <p className="text-right text-xs font-bold text-[#6D7475]">
+                <strong className="block text-base text-[#0D2734]">
+                  {availablePixels}
+                </strong>
+
+                slobodnih
+              </p>
             </div>
 
-            <div className="flex flex-1 items-center justify-center py-8 sm:py-10">
-              <PixelSelector
-                selectedPixel={selectedPixel}
-                purchasedPixels={purchasedPixels}
-                onSelect={choosePixel}
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#EFE8E1]">
+              <div
+                className="h-full rounded-full bg-[#D6384B] transition-[width] duration-500"
+                style={{
+                  width: `${progress}%`,
+                }}
               />
             </div>
           </div>
 
-          <div className="min-w-0">
-            <DonationForm
-              selectedPixel={selectedPixel}
-              successPixel={successPixel}
-              containerRef={donationRef}
-              onPurchase={completeDonation}
-              onReset={resetDonation}
-              onShareStory={() => setStoryOpen(true)}
-            />
+          <PixelSelector
+            selectedPixel={selectedPixel}
+            purchasedPixels={purchasedPixels}
+            onSelect={choosePixel}
+            onRandomSelect={chooseRandomPixel}
+          />
+
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-[#EFE8E1] pt-5">
+            <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6D7475]">
+              <span className="h-3 w-3 rounded-[3px] bg-[#F06B68]" />
+              {t("legend.donated")}
+            </span>
+
+            <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6D7475]">
+              <span className="h-3 w-3 rounded-[3px] border border-[#D8D4CE] bg-[#FFF6EB]" />
+              {t("legend.available")}
+            </span>
+
+            <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6D7475]">
+              <span className="h-3.5 w-3.5 rounded-[3px] border-2 border-[#0D2734] bg-[#FFDF78]" />
+              {t("legend.selected")}
+            </span>
           </div>
         </div>
       </div>
 
+      {isDonationDialogOpen && (
+        <DonationDialog
+          onClose={handleDonationClose} isMobile={isMobile}        >
+          {successPixel !== null ? (
+            <DonationSuccess
+              successPixel={successPixel}
+              onShareStory={() =>
+                setStoryOpen(true)
+              }
+              onReset={resetDonation}
+            />
+          ) : (
+            selectedPixel !== null && (
+              <DonationFormContent
+                selectedPixel={selectedPixel}
+                selectedColor={selectedColor}
+                donorName={donorName}
+                message={message}
+                showMessage={showMessage}
+                formattedPrice={formattedPrice}
+                onDonorNameChange={setDonorName}
+                onMessageChange={setMessage}
+                onShowMessage={() =>
+                  setShowMessage(true)
+                }
+                onHideMessage={hideMessage}
+                onSubmit={submitDonation}
+              />
+            )
+          )}
+        </DonationDialog>
+      )}
+
       {storyOpen && lastPurchase && (
         <InstagramStoryDialog
+          isMobile={isMobile}
           donation={lastPurchase}
-          onClose={() => setStoryOpen(false)}
+          onClose={() =>
+            setStoryOpen(false)
+          }
         />
       )}
     </section>

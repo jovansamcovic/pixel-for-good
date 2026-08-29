@@ -6,8 +6,12 @@ import { CampaignTrustBar } from "@/src/4-features/campain-trust-bar/CampainTrus
 import Footer from "@/src/4-features/footer/Footer";
 import Header from "@/src/4-features/header/Header";
 import LoadingScreen from "@/src/4-features/LoadingScreen/LoadingScreen";
+import { getDeviceDetector } from "@/src/6-shared/utils";
 
-export function HomePage() {
+export async  function HomePage() {
+
+const device = await getDeviceDetector();
+
   return (
     <main>
       <LoadingScreen/>
@@ -15,7 +19,7 @@ export function HomePage() {
       <HeroSection />
       <CampaignTrustBar/>
       <HowItWorksSection/>
-      <CampaignWidget />
+      <CampaignWidget isMobile={device?.isMobile}/>
       <FaqSection />
       <Footer />
     </main>
