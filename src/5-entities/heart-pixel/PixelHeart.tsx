@@ -75,11 +75,6 @@ export const HEART_PIXELS: HeartPixel[] = (() => {
   return pixels;
 })();
 
-export const HEART_RENDER_ROWS =
-  Math.max(
-    ...HEART_PIXELS.map((pixel) => pixel.row),
-  ) + 1;
-
 export const isInitiallySold = (
   id: number,
 ) =>
@@ -136,193 +131,193 @@ export function PixelHeart({
       aria-label={t("ariaLabel")}
       className={[
         "grid",
+        "aspect-[43/41]",
         "w-full",
         "max-w-[560px]",
+        "grid-cols-[repeat(43,minmax(0,1fr))]",
+        "grid-rows-[repeat(41,minmax(0,1fr))]",
         "gap-[2px] sm:gap-[3px]",
         className,
       ].join(" ")}
-      style={{
-        aspectRatio: `${HEART_COLUMNS} / ${HEART_RENDER_ROWS}`,
-        gridTemplateColumns: `repeat(${HEART_COLUMNS}, minmax(0, 1fr))`,
-        gridTemplateRows: `repeat(${HEART_RENDER_ROWS}, minmax(0, 1fr))`,
-      }}
     >
-      {HEART_PIXELS.map((pixel) => {
-        const pixelNumber =
-          pixel.id + 1;
+      {HEART_PIXELS.map(
+        (pixel) => {
+          const pixelNumber =
+            pixel.id + 1;
 
-        const purchasedColor =
-          purchasedPixels[
-            pixelNumber
-          ];
+          const purchasedColor =
+            purchasedPixels[
+              pixelNumber
+            ];
 
-        const sold =
-          isInitiallySold(
-            pixel.id,
-          ) ||
-          Boolean(
-            purchasedColor,
-          );
+          const sold =
+            isInitiallySold(
+              pixel.id,
+            ) ||
+            Boolean(
+              purchasedColor,
+            );
 
-        const selected =
-          selectedPixel ===
-          pixelNumber;
+          const selected =
+            selectedPixel ===
+            pixelNumber;
 
-        const highlighted =
-          highlightedPixel ===
-          pixelNumber;
+          const highlighted =
+            highlightedPixel ===
+            pixelNumber;
 
-        const soldColor =
-          purchasedColor ??
-          PIXEL_PALETTE[
-            pixel.id %
-              PIXEL_PALETTE.length
-          ];
+          const soldColor =
+            purchasedColor ??
+            PIXEL_PALETTE[
+              pixel.id %
+                PIXEL_PALETTE.length
+            ];
 
-        const pixelColor =
-          sold
-            ? soldColor
-            : "#FBE7E3";
+          const pixelColor =
+            sold
+              ? soldColor
+              : "#FBE7E3";
 
-        const pixelStyle: PixelStyle = {
-          "--pixel-column":
-            pixel.col + 1,
-          "--pixel-row":
-            pixel.row + 1,
-          "--pixel-color":
-            pixelColor,
-        };
+          const pixelStyle: PixelStyle = {
+            "--pixel-column":
+              pixel.col + 1,
+            "--pixel-row":
+              pixel.row + 1,
+            "--pixel-color":
+              pixelColor,
+          };
 
-        const positionClasses = [
-          "[grid-column:var(--pixel-column)]",
-          "[grid-row:var(--pixel-row)]",
-        ].join(" ");
+          const positionClasses = [
+            "[grid-column:var(--pixel-column)]",
+            "[grid-row:var(--pixel-row)]",
+          ].join(" ");
 
-        if (!interactive) {
+          if (!interactive) {
+            return (
+              <span
+                key={pixel.id}
+                style={pixelStyle}
+                aria-hidden="true"
+                className={[
+                  positionClasses,
+                  "relative",
+                  "aspect-square",
+                  "min-h-0",
+                  "min-w-0",
+                  "rounded-[2px]",
+                  "bg-[var(--pixel-color)]",
+                  highlighted
+                    ? [
+                        "z-20",
+                        "!bg-[#FFD665]",
+                        "ring-[2px]",
+                        "ring-[#102F3B]",
+                      ].join(" ")
+                    : "",
+                ].join(" ")}
+              />
+            );
+          }
+
+          const donor =
+            donorNames[
+              pixel.id %
+                donorNames.length
+            ];
+
           return (
-            <span
+            <button
               key={pixel.id}
+              type="button"
               style={pixelStyle}
-              aria-hidden="true"
+              disabled={sold}
+              aria-pressed={
+                selected
+              }
+              aria-label={
+                sold
+                  ? t(
+                      "soldAriaLabel",
+                      {
+                        pixel:
+                          pixelNumber,
+                        donor,
+                      },
+                    )
+                  : t(
+                      "availableAriaLabel",
+                      {
+                        pixel:
+                          pixelNumber,
+                      },
+                    )
+              }
+              title={
+                sold
+                  ? t(
+                      "soldTitle",
+                      {
+                        donor,
+                      },
+                    )
+                  : t(
+                      "availableTitle",
+                      {
+                        pixel:
+                          pixelNumber,
+                      },
+                    )
+              }
+              onClick={() => {
+                if (!sold) {
+                  onSelect?.(
+                    pixelNumber,
+                  );
+                }
+              }}
               className={[
                 positionClasses,
                 "relative",
                 "aspect-square",
                 "min-h-0",
                 "min-w-0",
+                "appearance-none",
                 "rounded-[2px]",
-                "bg-[var(--pixel-color)]",
-                highlighted
+                "p-0",
+                "outline-none",
+                "transition-[background-color,border-color,transform]",
+                "duration-150",
+                sold
                   ? [
-                      "z-20",
+                      "cursor-default",
+                      "border-0",
+                      "bg-[var(--pixel-color)]",
+                    ].join(" ")
+                  : [
+                      "cursor-pointer",
+                      "border",
+                      "border-[#F4B7B2]",
+                      "bg-[#FBE7E3]",
+                      "hover:z-10",
+                      "hover:border-[#E95A5E]",
+                      "hover:bg-[#F8D2CD]",
+                      "focus-visible:z-10",
+                      "focus-visible:outline-none",
+                    ].join(" "),
+                selected
+                  ? [
+                      "z-30",
+                      "!border-[2px]",
+                      "!border-[#102F3B]",
                       "!bg-[#FFD665]",
-                      "ring-[2px]",
-                      "ring-[#102F3B]",
+                      "scale-[1.08]",
                     ].join(" ")
                   : "",
               ].join(" ")}
             />
           );
-        }
-
-        const donor =
-          donorNames[
-            pixel.id %
-              donorNames.length
-          ];
-
-        return (
-          <button
-            key={pixel.id}
-            type="button"
-            style={pixelStyle}
-            disabled={sold}
-            aria-pressed={
-              selected
-            }
-            aria-label={
-              sold
-                ? t(
-                    "soldAriaLabel",
-                    {
-                      pixel:
-                        pixelNumber,
-                      donor,
-                    },
-                  )
-                : t(
-                    "availableAriaLabel",
-                    {
-                      pixel:
-                        pixelNumber,
-                    },
-                  )
-            }
-            title={
-              sold
-                ? t(
-                    "soldTitle",
-                    {
-                      donor,
-                    },
-                  )
-                : t(
-                    "availableTitle",
-                    {
-                      pixel:
-                        pixelNumber,
-                    },
-                  )
-            }
-            onClick={() => {
-              if (!sold) {
-                onSelect?.(
-                  pixelNumber,
-                );
-              }
-            }}
-            className={[
-              positionClasses,
-              "relative",
-              "aspect-square",
-              "min-h-0",
-              "min-w-0",
-              "appearance-none",
-              "rounded-[2px]",
-              "p-0",
-              "outline-none",
-              "transition-[background-color,border-color,transform]",
-              "duration-150",
-              sold
-                ? [
-                    "cursor-default",
-                    "border-0",
-                    "bg-[var(--pixel-color)]",
-                  ].join(" ")
-                : [
-                    "cursor-pointer",
-                    "border",
-                    "border-[#F4B7B2]",
-                    "bg-[#FBE7E3]",
-                    "hover:z-10",
-                    "hover:border-[#E95A5E]",
-                    "hover:bg-[#F8D2CD]",
-                    "focus-visible:z-10",
-                    "focus-visible:outline-none",
-                  ].join(" "),
-              selected
-                ? [
-                    "z-30",
-                    "!border-[2px]",
-                    "!border-[#102F3B]",
-                    "!bg-[#FFD665]",
-                    "scale-[1.08]",
-                  ].join(" ")
-                : "",
-            ].join(" ")}
-          />
-        );
-      })}
+        },
+      )}
     </div>
   );
 }

@@ -78,6 +78,11 @@
     "title": "Choose a pixel and leave your mark",
     "description": "Click an available pixel, choose a colour and add a message of support.",
     "availablePixels": "{count} still available",
+    "progress": {
+      "eyebrow": "Together, we're filling the heart",
+      "sold": "{count} pixels are already part of the heart",
+      "available": "available"
+    },
     "legend": {
       "ariaLabel": "Pixel legend",
       "donated": "Donated",
@@ -158,15 +163,17 @@
         "selectedLabel": "Selected colour"
       },
       "name": {
-        "label": "Name on the wall of gratitude",
+        "label": "How would you like to leave your mark?",
         "placeholder": "Your name or initials"
       },
       "message": {
         "label": "Message",
         "optional": "(optional)",
-        "placeholder": "Write a short message of support…"
+        "placeholder": "Write a short message of support…",
+        "remove": "Remove message"
       },
       "anonymous": "I want my donation to be anonymous",
+      "submit": "Donate and colour the heart",
       "submitButton": "Confirm demo donation",
       "demoNotice": "This is a demo — no payment or personal data storage takes place."
     }

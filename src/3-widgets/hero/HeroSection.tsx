@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 
-const PROGRESS = 58;
+const PROGRESS = 68;
 
 export function HeroSection() {
   const t = useTranslations("Hero");

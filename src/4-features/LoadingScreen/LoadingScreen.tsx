@@ -66,6 +66,7 @@ export default function LoadingScreen({
   const currentLocale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
+  const showTimer = false;
 
   const locale: SupportedLocale =
     currentLocale === "en" ? "en" : "sr";
@@ -298,7 +299,7 @@ export default function LoadingScreen({
             )}
           </div>
 
-          <section
+          {showTimer &&   <section
             aria-label={t(
               "countdown.ariaLabel",
             )}
@@ -335,7 +336,7 @@ export default function LoadingScreen({
                 </div>
               ))}
             </div>
-          </section>
+          </section>}
 
           <button
             type="button"

@@ -40,33 +40,45 @@ export function CampaignWidget({
   isMobile,
 }: CampaignWidgetProps) {
   const t = useTranslations("CampaignWidget");
-  const donationT = useTranslations("DonationForm");
+  const donationT =
+    useTranslations("DonationForm");
+
   const locale = useLocale();
 
-  const [selectedPixel, setSelectedPixel] = useState<
-    number | null
-  >(null);
+  const [selectedPixel, setSelectedPixel] =
+    useState<number | null>(null);
 
-  const [purchasedPixels, setPurchasedPixels] = useState<
-    Record<number, string>
-  >({});
+  const [
+    purchasedPixels,
+    setPurchasedPixels,
+  ] = useState<Record<number, string>>(
+    {},
+  );
 
-  const [successPixel, setSuccessPixel] = useState<
-    number | null
-  >(null);
+  const [successPixel, setSuccessPixel] =
+    useState<number | null>(null);
 
   const [lastPurchase, setLastPurchase] =
-    useState<DonationRecord | null>(null);
+    useState<DonationRecord | null>(
+      null,
+    );
 
-  const [storyOpen, setStoryOpen] = useState(false);
+  const [storyOpen, setStoryOpen] =
+    useState(false);
 
-  const [donorName, setDonorName] = useState("");
-  const [message, setMessage] = useState("");
+  const [donorName, setDonorName] =
+    useState("");
+
+  const [message, setMessage] =
+    useState("");
+
   const [showMessage, setShowMessage] =
     useState(false);
 
-  const [selectedColor, setSelectedColor] =
-    useState(PIXEL_PALETTE[0]);
+  const [
+    selectedColor,
+    setSelectedColor,
+  ] = useState(PIXEL_PALETTE[0]);
 
   useEffect(() => {
     if (selectedPixel === null) {
@@ -75,14 +87,17 @@ export function CampaignWidget({
 
     setSelectedColor(
       PIXEL_PALETTE[
-        selectedPixel % PIXEL_PALETTE.length
+        selectedPixel %
+          PIXEL_PALETTE.length
       ],
     );
   }, [selectedPixel]);
 
   const soldCount =
     STARTING_SOLD +
-    Object.keys(purchasedPixels).length;
+    Object.keys(
+      purchasedPixels,
+    ).length;
 
   const availablePixels = Math.max(
     HEART_PIXELS.length - soldCount,
@@ -90,37 +105,65 @@ export function CampaignWidget({
   );
 
   const progress = Math.min(
-    (soldCount / HEART_PIXELS.length) * 100,
+    (soldCount /
+      HEART_PIXELS.length) *
+      100,
     100,
   );
 
-  const formattedPrice = new Intl.NumberFormat(
-    locale === "sr" ? "sr-RS" : "en-US",
-    {
-      style: "currency",
-      currency: "RSD",
-      maximumFractionDigits: 0,
-    },
-  ).format(PIXEL_PRICE);
+  const numberLocale =
+    locale === "sr"
+      ? "sr-RS"
+      : "en-US";
+
+  const formattedPrice =
+    new Intl.NumberFormat(
+      numberLocale,
+      {
+        style: "currency",
+        currency: "RSD",
+        maximumFractionDigits: 0,
+      },
+    ).format(PIXEL_PRICE);
+
+  const formattedSoldCount =
+    soldCount.toLocaleString(
+      numberLocale,
+    );
+
+  const formattedAvailablePixels =
+    availablePixels.toLocaleString(
+      numberLocale,
+    );
 
   const isDonationDialogOpen =
     selectedPixel !== null ||
     successPixel !== null;
 
-  const choosePixel = (pixelId: number) => {
+  const choosePixel = (
+    pixelId: number,
+  ) => {
     setSelectedPixel(pixelId);
     setSuccessPixel(null);
   };
 
   const chooseRandomPixel = () => {
-    const available = HEART_PIXELS.filter((pixel) => {
-      const pixelNumber = pixel.id + 1;
+    const available =
+      HEART_PIXELS.filter(
+        (pixel) => {
+          const pixelNumber =
+            pixel.id + 1;
 
-      return (
-        !isInitiallySold(pixel.id) &&
-        purchasedPixels[pixelNumber] === undefined
+          return (
+            !isInitiallySold(
+              pixel.id,
+            ) &&
+            purchasedPixels[
+              pixelNumber
+            ] === undefined
+          );
+        },
       );
-    });
 
     if (available.length === 0) {
       return;
@@ -129,11 +172,14 @@ export function CampaignWidget({
     const randomPixel =
       available[
         Math.floor(
-          Math.random() * available.length,
+          Math.random() *
+            available.length,
         )
       ];
 
-    choosePixel(randomPixel.id + 1);
+    choosePixel(
+      randomPixel.id + 1,
+    );
   };
 
   const completeDonation = (
@@ -143,17 +189,23 @@ export function CampaignWidget({
       return;
     }
 
-    setPurchasedPixels((current) => ({
-      ...current,
-      [selectedPixel]: draft.color,
-    }));
+    setPurchasedPixels(
+      (current) => ({
+        ...current,
+        [selectedPixel]:
+          draft.color,
+      }),
+    );
 
     setLastPurchase({
       id: selectedPixel,
       ...draft,
     });
 
-    setSuccessPixel(selectedPixel);
+    setSuccessPixel(
+      selectedPixel,
+    );
+
     setSelectedPixel(null);
   };
 
@@ -170,10 +222,14 @@ export function CampaignWidget({
       color: selectedColor,
       name:
         donorName.trim() ||
-        donationT("defaults.anonymousDonor"),
+        donationT(
+          "defaults.anonymousDonor",
+        ),
       message:
         message.trim() ||
-        donationT("defaults.message"),
+        donationT(
+          "defaults.message",
+        ),
     });
   };
 
@@ -188,19 +244,25 @@ export function CampaignWidget({
     setDonorName("");
     setMessage("");
     setShowMessage(false);
-    setSelectedColor(PIXEL_PALETTE[0]);
+
+    setSelectedColor(
+      PIXEL_PALETTE[0],
+    );
 
     setStoryOpen(false);
   };
 
-  const handleDonationClose = () => {
-    if (successPixel !== null) {
-      resetDonation();
-      return;
-    }
+  const handleDonationClose =
+    () => {
+      if (
+        successPixel !== null
+      ) {
+        resetDonation();
+        return;
+      }
 
-    closeDonation();
-  };
+      closeDonation();
+    };
 
   const hideMessage = () => {
     setMessage("");
@@ -232,21 +294,32 @@ export function CampaignWidget({
             <div className="flex items-end justify-between gap-4">
               <div>
                 <p className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#D6384B]">
-                  Zajedno punimo srce
+                  {t(
+                    "progress.eyebrow",
+                  )}
                 </p>
 
                 <p className="mt-1 text-sm font-bold text-[#0D2734]">
-                  {soldCount.toLocaleString("sr-RS")}{" "}
-                  piksela već čini srce
+                  {t(
+                    "progress.sold",
+                    {
+                      count:
+                        formattedSoldCount,
+                    },
+                  )}
                 </p>
               </div>
 
               <p className="text-right text-xs font-bold text-[#6D7475]">
                 <strong className="block text-base text-[#0D2734]">
-                  {availablePixels}
+                  {
+                    formattedAvailablePixels
+                  }
                 </strong>
 
-                slobodnih
+                {t(
+                  "progress.available",
+                )}
               </p>
             </div>
 
@@ -261,26 +334,43 @@ export function CampaignWidget({
           </div>
 
           <PixelSelector
-            selectedPixel={selectedPixel}
-            purchasedPixels={purchasedPixels}
-            onSelect={choosePixel}
-            onRandomSelect={chooseRandomPixel}
+            selectedPixel={
+              selectedPixel
+            }
+            purchasedPixels={
+              purchasedPixels
+            }
+            onSelect={
+              choosePixel
+            }
+            onRandomSelect={
+              chooseRandomPixel
+            }
           />
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-[#EFE8E1] pt-5">
             <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6D7475]">
               <span className="h-3 w-3 rounded-[3px] bg-[#F06B68]" />
-              {t("legend.donated")}
+
+              {t(
+                "legend.donated",
+              )}
             </span>
 
             <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6D7475]">
               <span className="h-3 w-3 rounded-[3px] border border-[#D8D4CE] bg-[#FFF6EB]" />
-              {t("legend.available")}
+
+              {t(
+                "legend.available",
+              )}
             </span>
 
             <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6D7475]">
               <span className="h-3.5 w-3.5 rounded-[3px] border-2 border-[#0D2734] bg-[#FFDF78]" />
-              {t("legend.selected")}
+
+              {t(
+                "legend.selected",
+              )}
             </span>
           </div>
         </div>
@@ -288,46 +378,87 @@ export function CampaignWidget({
 
       {isDonationDialogOpen && (
         <DonationDialog
-          onClose={handleDonationClose} isMobile={isMobile}        >
-          {successPixel !== null ? (
+          isMobile={isMobile}
+          onClose={
+            handleDonationClose
+          }
+        >
+          {successPixel !==
+          null ? (
             <DonationSuccess
-              successPixel={successPixel}
-              onShareStory={() =>
-                setStoryOpen(true)
+              successPixel={
+                successPixel
               }
-              onReset={resetDonation}
+              onShareStory={() =>
+                setStoryOpen(
+                  true,
+                )
+              }
+              onReset={
+                resetDonation
+              }
             />
           ) : (
-            selectedPixel !== null && (
+            selectedPixel !==
+              null && (
               <DonationFormContent
-                selectedPixel={selectedPixel}
-                selectedColor={selectedColor}
-                donorName={donorName}
-                message={message}
-                showMessage={showMessage}
-                formattedPrice={formattedPrice}
-                onDonorNameChange={setDonorName}
-                onMessageChange={setMessage}
-                onShowMessage={() =>
-                  setShowMessage(true)
+                selectedPixel={
+                  selectedPixel
                 }
-                onHideMessage={hideMessage}
-                onSubmit={submitDonation}
+                selectedColor={
+                  selectedColor
+                }
+                donorName={
+                  donorName
+                }
+                message={
+                  message
+                }
+                showMessage={
+                  showMessage
+                }
+                formattedPrice={
+                  formattedPrice
+                }
+                onDonorNameChange={
+                  setDonorName
+                }
+                onMessageChange={
+                  setMessage
+                }
+                onShowMessage={() =>
+                  setShowMessage(
+                    true,
+                  )
+                }
+                onHideMessage={
+                  hideMessage
+                }
+                onSubmit={
+                  submitDonation
+                }
               />
             )
           )}
         </DonationDialog>
       )}
 
-      {storyOpen && lastPurchase && (
-        <InstagramStoryDialog
-          isMobile={isMobile}
-          donation={lastPurchase}
-          onClose={() =>
-            setStoryOpen(false)
-          }
-        />
-      )}
+      {storyOpen &&
+        lastPurchase && (
+          <InstagramStoryDialog
+            isMobile={
+              isMobile
+            }
+            donation={
+              lastPurchase
+            }
+            onClose={() =>
+              setStoryOpen(
+                false,
+              )
+            }
+          />
+        )}
     </section>
   );
 }

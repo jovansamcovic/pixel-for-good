@@ -78,6 +78,11 @@
     "title": "Izaberi piksel i ostavi svoj trag",
     "description": "Klikni na slobodan piksel, odaberi boju i dodaj poruku podrške.",
     "availablePixels": "Još {count} slobodnih",
+    "progress": {
+      "eyebrow": "Zajedno punimo srce",
+      "sold": "{count} piksela već čini srce",
+      "available": "slobodnih"
+    },
     "legend": {
       "ariaLabel": "Legenda piksela",
       "donated": "Donirano",
@@ -158,15 +163,17 @@
         "selectedLabel": "Izabrana boja"
       },
       "name": {
-        "label": "Ime na zidu zahvalnosti",
+        "label": "Kako želiš da ostaviš svoj trag?",
         "placeholder": "Tvoje ime ili inicijali"
       },
       "message": {
         "label": "Poruka",
         "optional": "(opciono)",
-        "placeholder": "Napiši kratku poruku podrške…"
+        "placeholder": "Napiši kratku poruku podrške…",
+        "remove": "Ukloni poruku"
       },
       "anonymous": "Želim da donacija bude anonimna",
+      "submit": "Doniraj i oboji srce",
       "submitButton": "Potvrdi demo donaciju",
       "demoNotice": "Ovo je demo — nema naplate niti čuvanja podataka."
     }

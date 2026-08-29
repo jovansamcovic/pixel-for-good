@@ -11,7 +11,7 @@ import { useTranslations } from "next-intl";
 
 import {
   HEART_COLUMNS,
-  HEART_RENDER_ROWS,
+  HEART_ROWS,
   PixelHeart,
 } from "@/src/5-entities/heart-pixel/PixelHeart";
 
@@ -333,7 +333,7 @@ export function PixelSelector({
 
   const heartHeight =
     baseWidth *
-    (HEART_RENDER_ROWS /
+    (HEART_ROWS /
       HEART_COLUMNS);
 
   const viewportHeight = Math.max(
