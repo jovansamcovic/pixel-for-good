@@ -11,7 +11,7 @@ import { useTranslations } from "next-intl";
 
 import {
   HEART_COLUMNS,
-  HEART_ROWS,
+  HEART_RENDER_ROWS,
   PixelHeart,
 } from "@/src/5-entities/heart-pixel/PixelHeart";
 
@@ -40,6 +40,8 @@ const MAX_SCALE = 2.6;
 const MIN_VIEWPORT_HEIGHT = 390;
 const HEART_VERTICAL_PADDING = 48;
 const MAX_HEART_WIDTH = 680;
+
+const SELECTION_BLOCK_DURATION = 300;
 
 const clampScale = (value: number) =>
   Math.min(
@@ -72,7 +74,8 @@ export function PixelSelector({
 }: PixelSelectorProps) {
   const t = useTranslations("PixelSelector");
 
-  const [scale, setScale] = useState(MIN_SCALE);
+  const [scale, setScale] =
+    useState(MIN_SCALE);
 
   const [pan, setPan] = useState<Point>({
     x: 0,
@@ -81,6 +84,9 @@ export function PixelSelector({
 
   const [baseWidth, setBaseWidth] =
     useState(320);
+
+  const [isPinching, setIsPinching] =
+    useState(false);
 
   const viewportRef =
     useRef<HTMLDivElement | null>(null);
@@ -92,8 +98,12 @@ export function PixelSelector({
   const gesture =
     useRef<GestureState | null>(null);
 
+  const blockSelectionUntil =
+    useRef(0);
+
   useEffect(() => {
-    const viewport = viewportRef.current;
+    const viewport =
+      viewportRef.current;
 
     if (!viewport) {
       return;
@@ -138,6 +148,8 @@ export function PixelSelector({
       y: 0,
     });
 
+    setIsPinching(false);
+
     activePointers.current.clear();
     gesture.current = null;
   };
@@ -150,6 +162,12 @@ export function PixelSelector({
     if (points.length !== 2) {
       return;
     }
+
+    setIsPinching(true);
+
+    blockSelectionUntil.current =
+      performance.now() +
+      SELECTION_BLOCK_DURATION;
 
     gesture.current = {
       distance: getDistance(
@@ -168,7 +186,9 @@ export function PixelSelector({
   const handlePointerDown = (
     event: ReactPointerEvent<HTMLDivElement>,
   ) => {
-    if (event.pointerType !== "touch") {
+    if (
+      event.pointerType !== "touch"
+    ) {
       return;
     }
 
@@ -224,6 +244,10 @@ export function PixelSelector({
 
     event.preventDefault();
 
+    blockSelectionUntil.current =
+      performance.now() +
+      SELECTION_BLOCK_DURATION;
+
     const currentDistance =
       getDistance(
         points[0],
@@ -236,25 +260,25 @@ export function PixelSelector({
         points[1],
       );
 
-    const nextScale = clampScale(
-      gesture.current.scale *
-        (currentDistance /
-          gesture.current.distance),
-    );
+    const nextScale =
+      clampScale(
+        gesture.current.scale *
+          (currentDistance /
+            gesture.current.distance),
+      );
 
     setScale(nextScale);
 
     setPan({
-      x: Math.round(
+      x:
         gesture.current.pan.x +
-          currentMidpoint.x -
-          gesture.current.midpoint.x,
-      ),
-      y: Math.round(
+        currentMidpoint.x -
+        gesture.current.midpoint.x,
+
+      y:
         gesture.current.pan.y +
-          currentMidpoint.y -
-          gesture.current.midpoint.y,
-      ),
+        currentMidpoint.y -
+        gesture.current.midpoint.y,
     });
   };
 
@@ -276,10 +300,32 @@ export function PixelSelector({
     }
 
     if (
-      activePointers.current.size < 2
+      activePointers.current.size < 2 &&
+      gesture.current
     ) {
       gesture.current = null;
+
+      setIsPinching(false);
+
+      blockSelectionUntil.current =
+        performance.now() +
+        SELECTION_BLOCK_DURATION;
     }
+  };
+
+  const handlePixelSelect = (
+    pixelId: number,
+  ) => {
+    const selectionBlocked =
+      isPinching ||
+      performance.now() <
+        blockSelectionUntil.current;
+
+    if (selectionBlocked) {
+      return;
+    }
+
+    onSelect(pixelId);
   };
 
   const renderedWidth =
@@ -287,10 +333,12 @@ export function PixelSelector({
 
   const heartHeight =
     baseWidth *
-    (HEART_ROWS / HEART_COLUMNS);
+    (HEART_RENDER_ROWS /
+      HEART_COLUMNS);
 
   const viewportHeight = Math.max(
-    heartHeight + HEART_VERTICAL_PADDING * 2,
+    heartHeight +
+      HEART_VERTICAL_PADDING * 2,
     MIN_VIEWPORT_HEIGHT,
   );
 
@@ -298,10 +346,18 @@ export function PixelSelector({
     <div className="flex w-full flex-col items-center">
       <div
         ref={viewportRef}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerEnd}
-        onPointerCancel={handlePointerEnd}
+        onPointerDown={
+          handlePointerDown
+        }
+        onPointerMove={
+          handlePointerMove
+        }
+        onPointerUp={
+          handlePointerEnd
+        }
+        onPointerCancel={
+          handlePointerEnd
+        }
         className={[
           "relative flex w-full",
           "items-center justify-center",
@@ -327,16 +383,25 @@ export function PixelSelector({
           className={[
             "relative flex shrink-0",
             "items-center justify-center",
-            "transition-transform",
-            "duration-150",
+
+            isPinching
+              ? "transition-none"
+              : [
+                  "transition-transform",
+                  "duration-150",
+                ].join(" "),
           ].join(" ")}
           style={{
             width: `${renderedWidth}px`,
-            transform: `translate3d(${Math.round(
-              pan.x,
-            )}px, ${Math.round(
-              pan.y,
-            )}px, 0)`,
+
+            transform: `translate3d(
+              ${pan.x}px,
+              ${pan.y}px,
+              0
+            )`,
+
+            willChange:
+              "transform, width",
           }}
         >
           <PixelHeart
@@ -347,8 +412,13 @@ export function PixelSelector({
             purchasedPixels={
               purchasedPixels
             }
-            onSelect={onSelect}
-            className="!max-w-none drop-shadow-[0_18px_28px_rgba(214,56,75,0.12)]"
+            onSelect={
+              handlePixelSelect
+            }
+            className={[
+              "!max-w-none",
+              "drop-shadow-[0_18px_28px_rgba(214,56,75,0.12)]",
+            ].join(" ")}
           />
         </div>
 
@@ -368,7 +438,10 @@ export function PixelSelector({
               "backdrop-blur",
             ].join(" ")}
           >
-            {Math.round(scale * 100)}% ·{" "}
+            {Math.round(
+              scale * 100,
+            )}
+            % ·{" "}
             {t("controls.reset")}
           </button>
         )}
