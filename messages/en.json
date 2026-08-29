@@ -179,6 +179,7 @@
     }
   },
   "PixelSelector": {
+    "randomSelect": "Choose a pixel for me",
     "hint": "Click an available square to select it",
     "pinchHint": "Spread two fingers over the heart to zoom in",
     "zoomStatus": "The current zoom level is {percentage} percent.",

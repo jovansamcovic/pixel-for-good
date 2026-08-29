@@ -33,7 +33,6 @@ export const DONOR_NAMES = [
 
 export const HEART_PIXELS: HeartPixel[] = (() => {
   const pixels: HeartPixel[] = [];
-
   let id = 0;
 
   for (
@@ -52,7 +51,7 @@ export const HEART_PIXELS: HeartPixel[] = (() => {
 
       const y =
         1.2 -
-        (row / (HEART_ROWS - 1)) * 2.464;
+        (row / (HEART_ROWS - 1)) * 2.402;
 
       const inside =
         Math.pow(
@@ -75,6 +74,19 @@ export const HEART_PIXELS: HeartPixel[] = (() => {
   return pixels;
 })();
 
+if (HEART_PIXELS.length !== 1_000) {
+  throw new Error(
+    `Heart must contain exactly 1000 pixels, got ${HEART_PIXELS.length}`,
+  );
+}
+
+export const HEART_RENDER_ROWS =
+  Math.max(
+    ...HEART_PIXELS.map(
+      (pixel) => pixel.row,
+    ),
+  ) + 1;
+
 export const isInitiallySold = (
   id: number,
 ) =>
@@ -83,15 +95,20 @@ export const isInitiallySold = (
 
 type PixelHeartProps = {
   highlightedPixel?: number;
+
   purchasedPixels?: Record<
     number,
     string
   >;
+
   selectedPixel?: number | null;
+
   interactive?: boolean;
+
   onSelect?: (
     pixelId: number,
   ) => void;
+
   className?: string;
 };
 
@@ -131,14 +148,24 @@ export function PixelHeart({
       aria-label={t("ariaLabel")}
       className={[
         "grid",
-        "aspect-[43/41]",
         "w-full",
         "max-w-[560px]",
-        "grid-cols-[repeat(43,minmax(0,1fr))]",
-        "grid-rows-[repeat(41,minmax(0,1fr))]",
         "gap-[2px] sm:gap-[3px]",
         className,
       ].join(" ")}
+      style={{
+        aspectRatio: `${HEART_COLUMNS} / ${HEART_RENDER_ROWS}`,
+
+        gridTemplateColumns: `repeat(
+          ${HEART_COLUMNS},
+          minmax(0, 1fr)
+        )`,
+
+        gridTemplateRows: `repeat(
+          ${HEART_RENDER_ROWS},
+          minmax(0, 1fr)
+        )`,
+      }}
     >
       {HEART_PIXELS.map(
         (pixel) => {
@@ -150,13 +177,18 @@ export function PixelHeart({
               pixelNumber
             ];
 
-          const sold =
+          const initiallySold =
             isInitiallySold(
               pixel.id,
-            ) ||
-            Boolean(
-              purchasedColor,
             );
+
+          const purchased =
+            purchasedColor !==
+            undefined;
+
+          const sold =
+            initiallySold ||
+            purchased;
 
           const selected =
             selectedPixel ===
@@ -181,8 +213,10 @@ export function PixelHeart({
           const pixelStyle: PixelStyle = {
             "--pixel-column":
               pixel.col + 1,
+
             "--pixel-row":
               pixel.row + 1,
+
             "--pixel-color":
               pixelColor,
           };
@@ -200,12 +234,17 @@ export function PixelHeart({
                 aria-hidden="true"
                 className={[
                   positionClasses,
+
                   "relative",
                   "aspect-square",
+
                   "min-h-0",
                   "min-w-0",
+
                   "rounded-[2px]",
+
                   "bg-[var(--pixel-color)]",
+
                   highlighted
                     ? [
                         "z-20",
@@ -277,16 +316,22 @@ export function PixelHeart({
               }}
               className={[
                 positionClasses,
+
                 "relative",
                 "aspect-square",
+
                 "min-h-0",
                 "min-w-0",
+
                 "appearance-none",
                 "rounded-[2px]",
+
                 "p-0",
                 "outline-none",
+
                 "transition-[background-color,border-color,transform]",
                 "duration-150",
+
                 sold
                   ? [
                       "cursor-default",
@@ -295,21 +340,29 @@ export function PixelHeart({
                     ].join(" ")
                   : [
                       "cursor-pointer",
+
                       "border",
                       "border-[#F4B7B2]",
+
                       "bg-[#FBE7E3]",
+
                       "hover:z-10",
                       "hover:border-[#E95A5E]",
                       "hover:bg-[#F8D2CD]",
+
                       "focus-visible:z-10",
                       "focus-visible:outline-none",
                     ].join(" "),
+
                 selected
                   ? [
                       "z-30",
+
                       "!border-[2px]",
                       "!border-[#102F3B]",
+
                       "!bg-[#FFD665]",
+
                       "scale-[1.08]",
                     ].join(" ")
                   : "",

@@ -93,23 +93,27 @@ export function CampaignWidget({
     );
   }, [selectedPixel]);
 
-  const soldCount =
-    STARTING_SOLD +
-    Object.keys(
-      purchasedPixels,
-    ).length;
+const availablePixelItems =
+  HEART_PIXELS.filter((pixel) => {
+    const pixelNumber = pixel.id + 1;
 
-  const availablePixels = Math.max(
-    HEART_PIXELS.length - soldCount,
-    0,
-  );
+    const initiallySold =
+      isInitiallySold(pixel.id);
 
-  const progress = Math.min(
-    (soldCount /
-      HEART_PIXELS.length) *
-      100,
-    100,
-  );
+    const purchased =
+      purchasedPixels[pixelNumber] !== undefined;
+
+    return !initiallySold && !purchased;
+  });
+
+const availablePixels =
+  availablePixelItems.length;
+
+const soldCount =
+  HEART_PIXELS.length - availablePixels;
+
+const progress =
+  (soldCount / HEART_PIXELS.length) * 100;
 
   const numberLocale =
     locale === "sr"

@@ -61,7 +61,6 @@ export function HeroSection() {
               ].join(" ")}
             >
               {t("primaryAction")}
-              <span aria-hidden="true">↘</span>
             </a>
 
             <a
@@ -76,7 +75,6 @@ export function HeroSection() {
               ].join(" ")}
             >
               {t("secondaryAction")}
-              <span aria-hidden="true">→</span>
             </a>
           </div>
 
@@ -87,7 +85,7 @@ export function HeroSection() {
               </dt>
 
               <dd className="mt-1 text-xl font-extrabold tracking-tight text-[#0D2734] sm:text-2xl">
-                {t("statistics.raisedValue")}
+                {'684.000 RSD'}
               </dd>
             </div>
 
@@ -97,7 +95,7 @@ export function HeroSection() {
               </dt>
 
               <dd className="mt-1 text-xl font-extrabold tracking-tight text-[#0D2734] sm:text-2xl">
-                {t("statistics.pixelsValue")}
+                {684}
               </dd>
             </div>
           </dl>

@@ -11,7 +11,7 @@ import { useTranslations } from "next-intl";
 
 import {
   HEART_COLUMNS,
-  HEART_ROWS,
+  HEART_RENDER_ROWS,
   PixelHeart,
 } from "@/src/5-entities/heart-pixel/PixelHeart";
 
@@ -333,7 +333,7 @@ export function PixelSelector({
 
   const heartHeight =
     baseWidth *
-    (HEART_ROWS /
+    (HEART_RENDER_ROWS /
       HEART_COLUMNS);
 
   const viewportHeight = Math.max(
@@ -490,7 +490,7 @@ export function PixelSelector({
             ✨
           </span>
 
-          Izaberi piksel za mene
+          {t("randomSelect")}
         </button>
 
         <p className="text-center text-xs leading-5 text-[#6D7475]">

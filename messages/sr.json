@@ -179,6 +179,7 @@
     }
   },
   "PixelSelector": {
+    "randomSelect": "Izaberi piksel za mene",
     "hint": "Klikni na svetli kvadratić da ga izabereš",
     "pinchHint": "Raširi dva prsta preko srca da ga uvećaš",
     "zoomStatus": "Uvećanje prikaza je {percentage} procenata.",
