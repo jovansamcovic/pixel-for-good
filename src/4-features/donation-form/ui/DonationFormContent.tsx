@@ -1,6 +1,7 @@
 "use client";
 
 import type { FormEvent } from "react";
+
 import { useTranslations } from "next-intl";
 
 type DonationFormContentProps = {
@@ -90,7 +91,7 @@ export function DonationFormContent({
           htmlFor="donor-name"
           className="mb-2 block text-sm font-bold text-[#0D2734]"
         >
-          Kako želiš da ostaviš svoj trag?
+          {t("form.name.label")}
         </label>
 
         <input
@@ -98,9 +99,13 @@ export function DonationFormContent({
           type="text"
           value={donorName}
           onChange={(event) =>
-            onDonorNameChange(event.target.value)
+            onDonorNameChange(
+              event.target.value,
+            )
           }
-          placeholder={t("form.name.placeholder")}
+          placeholder={t(
+            "form.name.placeholder",
+          )}
           maxLength={32}
           autoComplete="name"
           className={`${fieldClass} min-h-[52px]`}
@@ -140,7 +145,9 @@ export function DonationFormContent({
             <button
               type="button"
               onClick={onHideMessage}
-              aria-label="Remove message"
+              aria-label={t(
+                "form.message.remove",
+              )}
               className="text-xs font-bold text-[#9DA4A5] hover:text-[#0D2734]"
             >
               ×
@@ -151,7 +158,9 @@ export function DonationFormContent({
             id="donation-message"
             value={message}
             onChange={(event) =>
-              onMessageChange(event.target.value)
+              onMessageChange(
+                event.target.value,
+              )
             }
             placeholder={t(
               "form.message.placeholder",
@@ -182,7 +191,7 @@ export function DonationFormContent({
           "active:translate-y-0",
         ].join(" ")}
       >
-        Doniraj i oboji srce
+        {t("form.submit")}
 
         <span aria-hidden="true">
           →

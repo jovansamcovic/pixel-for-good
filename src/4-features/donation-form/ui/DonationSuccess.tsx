@@ -65,10 +65,6 @@ export function DonationSuccess({
         ].join(" ")}
       >
         {t("success.shareButton")}
-
-        <span aria-hidden="true">
-          ↗
-        </span>
       </button>
 
       <button
