@@ -52,7 +52,7 @@ type GestureState = {
 
 const MIN_SCALE = 1;
 
-const MAX_SCALE = 6;
+const MAX_SCALE = 10;
 
 const MIN_VIEWPORT_HEIGHT =
   420;
