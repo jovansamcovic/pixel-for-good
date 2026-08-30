@@ -21,22 +21,9 @@ export default function Header() {
           <a
             href="#top"
             aria-label={t("homeAriaLabel")}
-            className="flex items-center gap-3 text-[#0D2734]"
+            className="flex items-center"
           >
-            <span aria-hidden="true" className="grid grid-cols-3 gap-[2px]">
-              <span className="h-2.5 w-2.5 rounded-[2px] bg-[#D6384B]" />
-              <span className="h-2.5 w-2.5 rounded-[2px] bg-[#D6384B]" />
-              <span className="h-2.5 w-2.5 rounded-[2px] bg-[#F5A33B]" />
-
-              <span className="col-start-1 ml-[6px] h-2.5 w-2.5 rounded-[2px] bg-[#D6384B]" />
-              <span className="h-2.5 w-2.5 rounded-[2px] bg-[#D6384B]" />
-
-              <span className="col-start-2 h-2.5 w-2.5 rounded-[2px] bg-[#0D2734]" />
-            </span>
-
-            <span className="text-base font-extrabold tracking-[-0.03em] sm:text-lg">
-              {t("brandName")}
-            </span>
+            <img src="/logo.svg" alt={t("brandName")} className="h-12 w-auto" />
           </a>
 
           <a
