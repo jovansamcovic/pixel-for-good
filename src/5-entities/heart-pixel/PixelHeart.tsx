@@ -359,18 +359,6 @@ export function PixelHeart({
                     ].join(" ")
                   : "",
               ].join(" ")}
-              onMouseEnter={(event) => {
-                if (!sold && !selected) {
-                  event.currentTarget.style.backgroundColor =
-                    pixel.targetColor;
-                }
-              }}
-              onMouseLeave={(event) => {
-                if (!sold && !selected) {
-                  event.currentTarget.style.backgroundColor =
-                    getAvailablePixelColor(pixel.targetColor);
-                }
-              }}
             />
           );
         })}
