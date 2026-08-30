@@ -381,21 +381,7 @@ export function StoryContent({
 
             <div className="relative flex h-full flex-col p-6">
               <header className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5">
-                  <span
-                    aria-hidden="true"
-                    className="grid grid-cols-3 gap-[2px]"
-                  >
-                    <span className="h-2 w-2 rounded-[1px] bg-[#D6384B]" />
-                    <span className="h-2 w-2 rounded-[1px] bg-[#D6384B]" />
-                    <span className="h-2 w-2 rounded-[1px] bg-[#F5A33B]" />
-
-                    <span className="col-start-1 ml-[5px] h-2 w-2 rounded-[1px] bg-[#D6384B]" />
-                    <span className="h-2 w-2 rounded-[1px] bg-[#D6384B]" />
-
-                    <span className="col-start-2 h-2 w-2 rounded-[1px] bg-[#0D2734]" />
-                  </span>
-                </div>
+                <img src="/logo.svg" alt={t("brandName")} className="h-8 w-auto" />
               </header>
 
               <div className="text-center">
