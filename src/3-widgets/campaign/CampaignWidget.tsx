@@ -95,11 +95,11 @@ export function CampaignWidget({
   ] = useState(false);
 
   const [
-  selectedColor,
-  setSelectedColor,
-] = useState<string>(
-  PIXEL_PALETTE[0],
-);
+    selectedColor,
+    setSelectedColor,
+  ] = useState<string>(
+    PIXEL_PALETTE[0],
+  );
 
   /*
    * Every pixel has its own predetermined
@@ -134,7 +134,7 @@ export function CampaignWidget({
 
         const purchased =
           purchasedPixels[
-            pixelNumber
+          pixelNumber
           ] !== undefined;
 
         return (
@@ -204,7 +204,7 @@ export function CampaignWidget({
               pixel.id,
             ) &&
             purchasedPixels[
-              pixelNumber
+            pixelNumber
             ] === undefined
           );
         },
@@ -216,10 +216,10 @@ export function CampaignWidget({
 
     const randomPixel =
       available[
-        Math.floor(
-          Math.random() *
-            available.length,
-        )
+      Math.floor(
+        Math.random() *
+        available.length,
+      )
       ];
 
     choosePixel(
@@ -357,7 +357,7 @@ export function CampaignWidget({
                   )}
                 </p>
 
-                <p className="mt-1 text-sm font-bold text-[#0D2734]">
+                {soldCount > 0 && <p className="mt-1 text-sm font-bold text-[#0D2734]">
                   {t(
                     "progress.sold",
                     {
@@ -365,10 +365,10 @@ export function CampaignWidget({
                         formattedSoldCount,
                     },
                   )}
-                </p>
+                </p>}
               </div>
 
-              <p className="text-right text-xs font-bold text-[#6D7475]">
+              {soldCount > 0 && <p className="text-right text-xs font-bold text-[#6D7475]">
                 <strong className="block text-base text-[#0D2734]">
                   {
                     formattedAvailablePixels
@@ -378,7 +378,7 @@ export function CampaignWidget({
                 {t(
                   "progress.available",
                 )}
-              </p>
+              </p>}
             </div>
 
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#EFE8E1]">
@@ -442,7 +442,7 @@ export function CampaignWidget({
           }
         >
           {successPixel !==
-          null ? (
+            null ? (
             <DonationSuccess
               successPixel={
                 successPixel
@@ -458,7 +458,7 @@ export function CampaignWidget({
             />
           ) : (
             selectedPixel !==
-              null && (
+            null && (
               <DonationFormContent
                 selectedPixel={
                   selectedPixel

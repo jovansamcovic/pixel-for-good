@@ -174,7 +174,7 @@ export const HEART_PIXELS: HeartPixel[] = (() => {
 })();
 
 export const STARTING_SOLD = Math.round(
-  HEART_PIXELS.length * 0, // define here number of sold pixels
+  HEART_PIXELS.length * 0.68, // define here number of sold pixels
 );
 
 const hashPixel = (id: number) => {
