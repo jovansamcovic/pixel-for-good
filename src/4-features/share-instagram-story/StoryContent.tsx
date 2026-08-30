@@ -9,7 +9,7 @@ import {
   HEART_COLUMNS,
   HEART_PIXELS,
   HEART_ROWS,
-  PixelHeart,
+  isInitiallySold,
 } from "@/src/5-entities/heart-pixel/PixelHeart";
 
 type StoryContentProps = {
@@ -23,6 +23,75 @@ type StoryCopy = {
 
 const COLORS = {
   cream: "#FFF6EB",
+};
+
+const STORY_HEART_WIDTH = 864;
+const STORY_HEART_HEIGHT = Math.round(
+  STORY_HEART_WIDTH * (HEART_ROWS / HEART_COLUMNS),
+);
+
+const AVAILABLE_PIXEL_ALPHA = 0.22;
+
+const hexToRgba = (hex: string, alpha: number) => {
+  const value = hex.replace("#", "");
+  const red = parseInt(value.slice(0, 2), 16);
+  const green = parseInt(value.slice(2, 4), 16);
+  const blue = parseInt(value.slice(4, 6), 16);
+
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+};
+
+const drawStoryHeart = (
+  canvas: HTMLCanvasElement,
+  donation: DonationRecord,
+) => {
+  const context = canvas.getContext("2d");
+
+  if (!context) {
+    return;
+  }
+
+  canvas.width = STORY_HEART_WIDTH;
+  canvas.height = STORY_HEART_HEIGHT;
+
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.imageSmoothingEnabled = false;
+
+  const pixelWidth = canvas.width / HEART_COLUMNS;
+  const pixelHeight = canvas.height / HEART_ROWS;
+
+  HEART_PIXELS.forEach((pixel) => {
+    const pixelNumber = pixel.id + 1;
+    const purchased = pixelNumber === donation.id;
+    const sold = isInitiallySold(pixel.id) || purchased;
+
+    context.fillStyle = sold
+      ? pixel.targetColor
+      : hexToRgba(pixel.targetColor, AVAILABLE_PIXEL_ALPHA);
+
+    context.fillRect(
+      Math.floor(pixel.col * pixelWidth),
+      Math.floor(pixel.row * pixelHeight),
+      Math.ceil(pixelWidth),
+      Math.ceil(pixelHeight),
+    );
+  });
+
+  const selectedPixel = HEART_PIXELS.find(
+    (pixel) => pixel.id + 1 === donation.id,
+  );
+
+  if (selectedPixel) {
+    context.strokeStyle = "#102F3B";
+    context.lineWidth = Math.max(2, Math.round(pixelWidth * 0.35));
+
+    context.strokeRect(
+      Math.floor(selectedPixel.col * pixelWidth),
+      Math.floor(selectedPixel.row * pixelHeight),
+      Math.ceil(pixelWidth),
+      Math.ceil(pixelHeight),
+    );
+  }
 };
 
 const nextPaint = () =>
@@ -46,7 +115,16 @@ const createInstagramStory = async (
     throw new Error(copy.imageError);
   }
 
-  const fontEmbedCSS = await getFontEmbedCSS(previewElement);
+  let fontEmbedCSS = "";
+
+  try {
+    fontEmbedCSS = await getFontEmbedCSS(previewElement);
+  } catch (error) {
+    console.warn(
+      "Instagram story font embedding failed; continuing with fallback fonts.",
+      error,
+    );
+  }
 
   const blob = await toBlob(previewElement, {
     width,
@@ -84,6 +162,7 @@ export function StoryContent({
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const storyPreviewRef = useRef<HTMLDivElement | null>(null);
+  const heartCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -94,10 +173,13 @@ export function StoryContent({
     };
 
     const previewElement = storyPreviewRef.current;
+    const heartCanvas = heartCanvasRef.current;
 
-    if (!previewElement) {
+    if (!previewElement || !heartCanvas) {
       return;
     }
+
+    drawStoryHeart(heartCanvas, donation);
 
     createInstagramStory(
       previewElement,
@@ -110,7 +192,9 @@ export function StoryContent({
           setIsPreparing(false);
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error("Instagram story generation failed:", error);
+
         if (!cancelled) {
           setIsPreparing(false);
           setShareStatus(
@@ -354,14 +438,12 @@ export function StoryContent({
 
               <div className="mt-5 flex flex-1 items-center justify-center">
                 <div className="relative w-full max-w-[260px] overflow-visible">
-                  <PixelHeart
-                    className="!max-w-none gap-px"
-                    highlightedPixel={
-                      donation.id
-                    }
-                    purchasedPixels={{
-                      [donation.id]:
-                        donation.color,
+                  <canvas
+                    ref={heartCanvasRef}
+                    aria-hidden="true"
+                    className="block h-auto w-full"
+                    style={{
+                      imageRendering: "pixelated",
                     }}
                   />
 
