@@ -364,7 +364,7 @@ export function StoryContent({
               ].join(" ")
             : [
                 "pointer-events-none",
-                "fixed -left-[2000px] top-0",
+                "fixed left-0 top-0",
                 "z-[-1]",
                 "flex h-[720px] w-[500px]",
                 "items-center justify-center",
@@ -426,7 +426,13 @@ export function StoryContent({
 
             <div className="relative flex h-full flex-col p-6">
               <header className="flex items-center justify-between gap-3">
-                <img src="/logo.svg" alt={t("brandName")} className="h-8 w-auto" />
+                <img
+                  src="/logo.svg"
+                  alt={t("brandName")}
+                  loading="eager"
+                  decoding="sync"
+                  className="h-8 w-auto"
+                />
               </header>
 
               <div className="text-center">
@@ -473,6 +479,8 @@ export function StoryContent({
                     ref={heartImageRef}
                     alt=""
                     aria-hidden="true"
+                    loading="eager"
+                    decoding="sync"
                     className="block h-auto w-full"
                     style={{
                       imageRendering: "pixelated",
