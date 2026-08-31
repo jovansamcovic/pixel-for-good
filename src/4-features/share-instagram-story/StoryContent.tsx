@@ -41,14 +41,14 @@ const hexToRgba = (hex: string, alpha: number) => {
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 };
 
-const drawStoryHeart = (
-  canvas: HTMLCanvasElement,
+const createStoryHeartDataUrl = (
   donation: DonationRecord,
-) => {
+): string => {
+  const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
   if (!context) {
-    return;
+    throw new Error("Could not create story heart canvas.");
   }
 
   canvas.width = STORY_HEART_WIDTH;
@@ -92,6 +92,8 @@ const drawStoryHeart = (
       Math.ceil(pixelHeight),
     );
   }
+
+  return canvas.toDataURL("image/png");
 };
 
 const nextPaint = () =>
@@ -100,6 +102,40 @@ const nextPaint = () =>
       window.requestAnimationFrame(() => resolve());
     });
   });
+
+const waitForImage = async (image: HTMLImageElement) => {
+  if (image.complete && image.naturalWidth > 0) {
+    if (typeof image.decode === "function") {
+      try {
+        await image.decode();
+      } catch {
+        // Loaded enough for rendering.
+      }
+    }
+
+    return;
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const handleLoad = () => {
+      cleanup();
+      resolve();
+    };
+
+    const handleError = () => {
+      cleanup();
+      reject(new Error("Story heart image failed to load."));
+    };
+
+    const cleanup = () => {
+      image.removeEventListener("load", handleLoad);
+      image.removeEventListener("error", handleError);
+    };
+
+    image.addEventListener("load", handleLoad, { once: true });
+    image.addEventListener("error", handleError, { once: true });
+  });
+};
 
 const createInstagramStory = async (
   previewElement: HTMLDivElement,
@@ -162,7 +198,7 @@ export function StoryContent({
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const storyPreviewRef = useRef<HTMLDivElement | null>(null);
-  const heartCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const heartImageRef = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -173,26 +209,32 @@ export function StoryContent({
     };
 
     const previewElement = storyPreviewRef.current;
-    const heartCanvas = heartCanvasRef.current;
+    const heartImage = heartImageRef.current;
 
-    if (!previewElement || !heartCanvas) {
+    if (!previewElement || !heartImage) {
       return;
     }
 
-    drawStoryHeart(heartCanvas, donation);
+    const prepareStory = async () => {
+      try {
+        const heartDataUrl = createStoryHeartDataUrl(donation);
 
-    createInstagramStory(
-      previewElement,
-      donation,
-      copy,
-    )
-      .then((file) => {
+        heartImage.src = heartDataUrl;
+
+        await waitForImage(heartImage);
+        await nextPaint();
+
+        const file = await createInstagramStory(
+          previewElement,
+          donation,
+          copy,
+        );
+
         if (!cancelled) {
           setStoryFile(file);
           setIsPreparing(false);
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Instagram story generation failed:", error);
 
         if (!cancelled) {
@@ -201,7 +243,10 @@ export function StoryContent({
             t("status.preparationFailed"),
           );
         }
-      });
+      }
+    };
+
+    void prepareStory();
 
     return () => {
       cancelled = true;
@@ -424,8 +469,9 @@ export function StoryContent({
 
               <div className="mt-5 flex flex-1 items-center justify-center">
                 <div className="relative w-full max-w-[260px] overflow-visible">
-                  <canvas
-                    ref={heartCanvasRef}
+                  <img
+                    ref={heartImageRef}
+                    alt=""
                     aria-hidden="true"
                     className="block h-auto w-full"
                     style={{
