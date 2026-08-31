@@ -405,32 +405,6 @@ export function CampaignWidget({
               chooseRandomPixel
             }
           />
-
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-[#EFE8E1] pt-5">
-            <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6D7475]">
-              <span className="h-3 w-3 rounded-[2px] bg-[#D6384B]" />
-
-              {t(
-                "legend.donated",
-              )}
-            </span>
-
-            <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6D7475]">
-              <span className="h-3 w-3 rounded-[2px] border border-[#D8D4CE] bg-[#FFF9F4]" />
-
-              {t(
-                "legend.available",
-              )}
-            </span>
-
-            <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6D7475]">
-              <span className="h-3.5 w-3.5 rounded-[2px] border-2 border-[#0D2734] bg-[#FFD665]" />
-
-              {t(
-                "legend.selected",
-              )}
-            </span>
-          </div>
         </div>
       </div>
 

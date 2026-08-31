@@ -38,9 +38,7 @@ export function HeroSection() {
               {t("title.highlighted")}
             </span>
 
-            <span className="mt-2 block">
-              {t("title.last")}
-            </span>
+            <span className="mt-2 block">{t("title.last")}</span>
           </h1>
 
           <p className="mt-7 max-w-xl text-base leading-7 text-[#6D7475] sm:text-lg">
@@ -77,28 +75,6 @@ export function HeroSection() {
               {t("secondaryAction")}
             </a>
           </div>
-
-          <dl className="mt-12 grid max-w-lg grid-cols-2 divide-x divide-[#0D2734]/15">
-            <div className="pr-6">
-              <dt className="text-xs text-[#6D7475]">
-                {t("statistics.raisedLabel")}
-              </dt>
-
-              <dd className="mt-1 text-xl font-extrabold tracking-tight text-[#0D2734] sm:text-2xl">
-                {'684.000 RSD'}
-              </dd>
-            </div>
-
-            <div className="pl-6">
-              <dt className="text-xs text-[#6D7475]">
-                {t("statistics.pixelsLabel")}
-              </dt>
-
-              <dd className="mt-1 text-xl font-extrabold tracking-tight text-[#0D2734] sm:text-2xl">
-                {684}
-              </dd>
-            </div>
-          </dl>
         </div>
 
         <div className="mx-auto w-full max-w-xl rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(13,39,52,0.14)] sm:p-8">
@@ -194,8 +170,7 @@ export function HeroSection() {
               href="#srce"
               className="font-bold text-[#0D2734] transition hover:text-[#D6384B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6384B]"
             >
-              {t("heartCard.action")}{" "}
-              <span aria-hidden="true">→</span>
+              {t("heartCard.action")} <span aria-hidden="true">→</span>
             </a>
           </div>
         </div>

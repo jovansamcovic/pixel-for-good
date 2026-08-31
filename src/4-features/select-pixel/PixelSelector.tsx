@@ -718,13 +718,6 @@ export function PixelSelector({
         </button>
 
         <p className="text-center text-xs leading-5 text-[#6D7475]">
-          <span
-            aria-hidden="true"
-            className="mr-1 text-[#D6384B]"
-          >
-            ↗
-          </span>
-
           {t("hint")}
         </p>
       </div>

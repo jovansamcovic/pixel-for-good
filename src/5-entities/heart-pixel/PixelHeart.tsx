@@ -202,7 +202,7 @@ export const isInitiallySold = (id: number) =>
 export const getPixelTargetColor = (pixelNumber: number) =>
   HEART_PIXELS[pixelNumber - 1]?.targetColor ?? PIXEL_COLORS["R"];
 
-const AVAILABLE_PIXEL_OPACITY = 0.22;
+const AVAILABLE_PIXEL_OPACITY = 0.5;
 
 const hexToRgba = (hex: string, alpha: number) => {
   const value = hex.replace("#", "");
