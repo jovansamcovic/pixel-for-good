@@ -173,7 +173,7 @@ export default function LoadingScreen({ onEnter }: LoadingScreenProps) {
         />
 
         <main className="relative mx-auto flex w-full max-w-4xl flex-col items-center text-center">
-          <img src="/logo.svg" alt={t("brandName")} className="h-20 w-auto" />
+          <img src="/logo.svg" alt={'Srce Kragujevca'} className="h-20 w-auto" />
 
           <h1 className="mt-6 max-w-3xl text-4xl font-extrabold leading-[1.05] tracking-[-0.05em] sm:text-6xl lg:text-7xl">
             {t("title.first")}

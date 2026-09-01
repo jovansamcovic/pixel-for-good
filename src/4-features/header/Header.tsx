@@ -23,7 +23,7 @@ export default function Header() {
             aria-label={t("homeAriaLabel")}
             className="flex items-center"
           >
-            <img src="/logo.svg" alt={t("brandName")} className="h-12 w-auto" />
+            <img src="/logo.svg" alt={'Srce Kragujevca'} className="h-12 w-auto" />
           </a>
 
           <a

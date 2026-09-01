@@ -7,9 +7,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 
-import {
-  useTranslations,
-} from "next-intl";
+import { useTranslations } from "next-intl";
 
 import {
   HEART_COLUMNS,
@@ -18,9 +16,7 @@ import {
 } from "@/src/5-entities/heart-pixel/PixelHeart";
 
 type PixelSelectorProps = {
-  selectedPixel:
-    | number
-    | null;
+  selectedPixel: number | null;
 
   purchasedPixels: Record<
     number,
@@ -31,8 +27,7 @@ type PixelSelectorProps = {
     pixelId: number,
   ) => void;
 
-  onRandomSelect:
-    () => void;
+  onRandomSelect: () => void;
 };
 
 type Point = {
@@ -54,17 +49,13 @@ const MIN_SCALE = 1;
 
 const MAX_SCALE = 10;
 
-const MIN_VIEWPORT_HEIGHT =
-  420;
+const MIN_VIEWPORT_HEIGHT = 420;
 
-const HEART_VERTICAL_PADDING =
-  42;
+const HEART_VERTICAL_PADDING = 42;
 
-const MAX_HEART_WIDTH =
-  720;
+const MAX_HEART_WIDTH = 720;
 
-const SELECTION_BLOCK_DURATION =
-  300;
+const SELECTION_BLOCK_DURATION = 300;
 
 const clampScale = (
   value: number,
@@ -82,11 +73,8 @@ const getDistance = (
   second: Point,
 ) =>
   Math.hypot(
-    second.x -
-      first.x,
-
-    second.y -
-      first.y,
+    second.x - first.x,
+    second.y - first.y,
   );
 
 const getMidpoint = (
@@ -94,13 +82,11 @@ const getMidpoint = (
   second: Point,
 ): Point => ({
   x:
-    (first.x +
-      second.x) /
+    (first.x + second.x) /
     2,
 
   y:
-    (first.y +
-      second.y) /
+    (first.y + second.y) /
     2,
 });
 
@@ -330,6 +316,12 @@ export function PixelSelector({
         activePointers.current.values(),
       );
 
+    /*
+     * One finger belongs to the page:
+     * allow the browser to scroll normally.
+     *
+     * Only intercept two-finger gestures.
+     */
     if (
       points.length !== 2 ||
       !gesture.current
@@ -480,7 +472,17 @@ export function PixelSelector({
 
           "overflow-hidden",
 
-          "touch-none",
+          /*
+           * IMPORTANT:
+           *
+           * One finger can scroll the page
+           * vertically even when touching
+           * the heart.
+           *
+           * Two-finger gestures are handled
+           * by our pointer handlers.
+           */
+          "touch-pan-y",
 
           "rounded-[28px]",
 
