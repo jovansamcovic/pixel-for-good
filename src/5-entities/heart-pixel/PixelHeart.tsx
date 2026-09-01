@@ -204,6 +204,10 @@ export const getPixelTargetColor = (pixelNumber: number) =>
 
 const AVAILABLE_PIXEL_OPACITY = 0.5;
 
+const AVAILABLE_PIXEL_COLORS: Partial<Record<string, string>> = {
+  "#FBF4ED": "#D8CEC5",
+};
+
 const hexToRgba = (hex: string, alpha: number) => {
   const value = hex.replace("#", "");
   const red = parseInt(value.slice(0, 2), 16);
@@ -213,8 +217,16 @@ const hexToRgba = (hex: string, alpha: number) => {
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 };
 
-const getAvailablePixelColor = (targetColor: string) =>
-  hexToRgba(targetColor, AVAILABLE_PIXEL_OPACITY);
+const getAvailablePixelColor = (targetColor: string) => {
+  const overrideColor =
+    AVAILABLE_PIXEL_COLORS[targetColor.toUpperCase()];
+
+  if (overrideColor) {
+    return overrideColor;
+  }
+
+  return hexToRgba(targetColor, AVAILABLE_PIXEL_OPACITY);
+};
 
 type PixelHeartProps = {
   highlightedPixel?: number;
